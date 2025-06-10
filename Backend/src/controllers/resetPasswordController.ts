@@ -4,53 +4,6 @@ import userModel from "../models/userModel";
 import crypto from 'crypto'
 import mailSender from "../utils/mailSender";
 
-
-// export const resetPassword = async (req : Request , res : Response) => {
-//         try{
-
-//             const {email , newPassword , otp} = req.body;
-
-//             // find user already exists or not
-//             const checkUser = await userModel.findOne({email});
-//              if(!checkUser){
-//                  res.status(400).send({
-//                      success : false,
-//                      message : "user not found"
-//                  })
-//                  return;
-//              }
-
-//             // now first verify user
-//             const verifyUser = await OtpModel.findOne({email , otp});
-//             if(!verifyUser){
-//                 res.status(400).send({
-//                     success : false,
-//                     message : "Invalid otp"
-//                 })
-//                 return;
-//             }
-
-//             // if user is verified then update user in db 
-//             const updateUserPassword = await updateUser(newPassword , email);
-//             console.log(updateUserPassword);
-
-
-
-//         }catch(err){
-//             let errorMessage;
-//             if(err instanceof Error){
-//                 errorMessage = err.message
-//             } else if(typeof(err) === 'string'){
-//                 errorMessage = err
-//             }
-//             res.status(500).send({
-//                 success : false,
-//                 message : "error comes in send otp",
-//                 error : errorMessage
-//             })
-//         }
-//    }
-
 export const resetPasswordToken = async (req : Request , res : Response) => {
         try{
               const {email} = req.body;
@@ -110,21 +63,12 @@ export const resetPasswordToken = async (req : Request , res : Response) => {
 
 export const resetPasswordVerification = async (req : Request , res : Response) => {
         try{
-              const {email , password , token} = req.body;
+              const {password , token} = req.body;
 
                // find user already exists or not
-            const checkUser = await userModel.findOne({email});
-             if(!checkUser){
-                 res.status(400).send({
-                     success : false,
-                     message : "user not found signup first"
-                 })
-                 return;
-             }
-
+            const checkUser = await userModel.findOne({resetPasswordToken : token});
              // now verify user token
-             const getToken = checkUser.resetPasswordToken
-             if(getToken !== token){
+             if(!checkUser){
                 res.status(400).send({
                     success : false,
                     message : "Invalid Token for Reset Password"

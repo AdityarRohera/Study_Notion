@@ -4,6 +4,10 @@ import userModel from '../models/userModel';
 import OtpModel from '../models/OTPModel';
 import mailSender from '../utils/mailSender';
 import {additionalProfile , createUserFunc} from '../utils/authServises'
+import bcrypt from 'bcrypt';
+const saltRounds = 10;
+import jwt from 'jsonwebtoken';
+const secret = process.env.TOKEN_SECRET;
 
 
   export const sendOTP = async (req : Request , res : Response) => {
@@ -92,10 +96,14 @@ import {additionalProfile , createUserFunc} from '../utils/authServises'
                 gender: null, dateOfBirth: null , about: null
             }
             const createAdditionalProfile = await additionalProfile(additionalProfilePayload);
-            console.log(createAdditionalProfile)
+            console.log(createAdditionalProfile);
+
+            // now bcrypt password
+            const hashPassword = await bcrypt.hash(password , saltRounds);
+            console.log(hashPassword);
 
             const createUserPayload ={
-                firstName, lastName , email , contact_no , password , account_type , additional_info : createAdditionalProfile._id , 
+                firstName, lastName , email , contact_no , password : hashPassword , account_type , additional_info : createAdditionalProfile._id
             }
             const createUser = await createUserFunc(createUserPayload);
             console.log(createUser);
@@ -124,7 +132,55 @@ import {additionalProfile , createUserFunc} from '../utils/authServises'
   export const signin = async (req : Request , res : Response) => {
         try{
 
-            
+            const {account_type , email , password} = req.body;
+
+            // validation pending...
+
+            // check email already exists or not
+            const checkUser = await userModel.findOne({email});
+            if(!checkUser){
+                res.status(400).send({
+                    success : false,
+                    message : "user not found. signup first"
+                })
+                return;
+            }
+
+            // check password is correct or not 
+             const checkPassword = await bcrypt.compare(password , checkUser.password);
+             if(!checkPassword){
+                 res.status(409).send({
+                     success : false,
+                     message : "password incorrect"
+                 })
+                 return;
+             }
+
+             // check for user role
+             if(checkUser.account_type !== account_type){
+                res.status(400).send({
+                    success : false,
+                    message : "User role is incorrect"
+                })
+                return;
+             }
+
+            // now create token for user
+             const token = secret ? jwt.sign({
+               userId : checkUser._id ,
+               role : checkUser.account_type
+             } , secret, {expiresIn: '3d'}) : null;
+             
+             console.log(token);
+
+             // now send token to user
+             if(!token) return;
+             res.cookie("token" , token , { expires: new Date(Date.now() + 3*24*60*60*1000) , httpOnly: true}).status(200).send({
+                success : true,
+                message : "login successfully",
+                token : token
+             })
+
 
         }catch(err){
             let errorMessage;
@@ -140,3 +196,27 @@ import {additionalProfile , createUserFunc} from '../utils/authServises'
             })
         }
    }
+
+//   export const changePassword = async (req : Request , res : Response) => {
+//         try{
+
+//             const {oldPassword , newpassword} = req.body;
+//             const userId = 
+//             // check old password is correct or not
+//             const checkPassword = await userModel.findById()
+            
+
+//         }catch(err){
+//             let errorMessage;
+//             if(err instanceof Error){
+//                 errorMessage = err.message
+//             } else if(typeof(err) === 'string'){
+//                 errorMessage = err
+//             }
+//             res.status(500).send({
+//                 success : false,
+//                 message : "error comes in send otp",
+//                 error : errorMessage
+//             })
+//         }
+//    }
