@@ -13,8 +13,11 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cloudinary": "^2.6.1",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "express-fileupload": "^1.5.1",
+    "file-type": "^21.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.15.1",
     "nodemailer": "^7.0.3",
@@ -26,6 +29,7 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.3",
+    "@types/express-fileupload": "^1.5.1",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/nodemailer": "^6.4.17",
     "@types/otp-generator": "^4.0.2"

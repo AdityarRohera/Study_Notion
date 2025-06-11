@@ -123,7 +123,7 @@ const secret = process.env.TOKEN_SECRET;
             }
             res.status(500).send({
                 success : false,
-                message : "error comes in send otp",
+                message : "error comes in signup",
                 error : errorMessage
             })
         }
@@ -170,7 +170,7 @@ const secret = process.env.TOKEN_SECRET;
                userId : checkUser._id ,
                role : checkUser.account_type
              } , secret, {expiresIn: '3d'}) : null;
-             
+
              console.log(token);
 
              // now send token to user
@@ -182,7 +182,7 @@ const secret = process.env.TOKEN_SECRET;
              })
 
 
-        }catch(err){
+        }catch(err : unknown){
             let errorMessage;
             if(err instanceof Error){
                 errorMessage = err.message
@@ -191,7 +191,7 @@ const secret = process.env.TOKEN_SECRET;
             }
             res.status(500).send({
                 success : false,
-                message : "error comes in send otp",
+                message : "Error comes in signin",
                 error : errorMessage
             })
         }

@@ -46,13 +46,13 @@ export const userAuth = async (req : Request , res : Response , next : Function)
             }
             res.status(500).send({
                 success : false,
-                message : "error comes in send otp",
+                message : "error comes in user auth",
                 error : errorMessage
             })
         }
    }
 
-   exports.isStudent = async(req : Request , res : Response , next : Function) => {
+   export const isStudent = async(req : Request , res : Response , next : Function) => {
     try{
          const userReq = req as AuthenticatedRequest;
         if(userReq.user.account_Type !== "Student") {
@@ -70,14 +70,16 @@ export const userAuth = async (req : Request , res : Response , next : Function)
         })
     }
 }
-exports.isInstructor = async(req : Request , res : Response , next : Function) => {
+
+  export const isInstructor = async(req : Request , res : Response , next : Function) => {
     try{
         const userReq = req as AuthenticatedRequest;
         if(userReq.user.accountType !== "Instructor") {
-            return res.status(401).json({
+             res.status(401).json({
                 success:false,
                 message:'This is a protected route for Instructor only',
             });
+            return;
         }
         next();
     }
@@ -89,7 +91,7 @@ exports.isInstructor = async(req : Request , res : Response , next : Function) =
     }
 }
 
-exports.isAdmin = async (req : Request , res : Response , next : Function) => {
+export const isAdmin = async (req : Request , res : Response , next : Function) => {
     try{    
            const userReq = req as AuthenticatedRequest;
            if(userReq.user.accountType !== "Admin") {
