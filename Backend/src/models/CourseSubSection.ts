@@ -6,7 +6,7 @@ interface CourseSubSectionType {
     duration : number;
 }
 
-const courseSectionSchema : Schema<CourseSubSectionType> = new Schema<CourseSubSectionType>({
+const courseSubSectionSchema : Schema<CourseSubSectionType> = new Schema<CourseSubSectionType>({
     subSectionName : {
         type : String,
         required : true,
@@ -24,5 +24,5 @@ const courseSectionSchema : Schema<CourseSubSectionType> = new Schema<CourseSubS
     }
 })
 
-const courseSectionModel : mongoose.Model<CourseSubSectionType> = mongoose.model('CourseSection' , courseSectionSchema);
-export default courseSectionModel;
+const courseSubSectionModel : mongoose.Model<CourseSubSectionType> = mongoose.model('CourseSubSection' , courseSubSectionSchema);
+export default courseSubSectionModel;

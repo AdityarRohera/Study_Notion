@@ -1,4 +1,4 @@
-import tagModel from "../models/tagModel";
+import categoryModel from "../models/categoryModel";
 import { Request , Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth";
 
@@ -6,7 +6,7 @@ export const createCategory = async(req : Request , res : Response) => {
     try{
         const {name , desc} = req.body;
 
-        const createTag = await tagModel.create({name , desc});
+        const createTag = await categoryModel.create({name , desc});
         res.status(200).send({
             success : true,
             message : "Tag created",
@@ -31,7 +31,7 @@ export const createCategory = async(req : Request , res : Response) => {
 export const getAllCategoies = async(req : Request , res : Response) => {
     try{
 
-        const getCategories = await tagModel.find({} , {name:true , desc:true});
+        const getCategories = await categoryModel.find({} , {name:true , desc:true});
         res.status(200).send({
             success : true,
             message : "Tag fatched",

@@ -1,4 +1,5 @@
 import mongoose,{Schema , Model, ObjectId} from "mongoose";
+import { resourceLimits } from "worker_threads";
 const {ObjectId} = Schema.Types
 
 interface CourseSchemaType {
@@ -11,7 +12,7 @@ interface CourseSchemaType {
     TotalNumberRated : number;
     price : number;
     thumbnail : string;
-    tag : ObjectId;
+    category : ObjectId;
     numberOfStudentEnrolled : number;
 }
 
@@ -65,7 +66,7 @@ const courseSchema : Schema<CourseSchemaType> = new Schema<CourseSchemaType>({
          required : true,
          trim : true
     },
-    tag : [
+    category : [
         {
             type : ObjectId,
             ref : 'Tags'
@@ -78,6 +79,12 @@ const courseSchema : Schema<CourseSchemaType> = new Schema<CourseSchemaType>({
     }
 
 })
+
+courseSchema.path('courseContent').validate((value) => {
+    if(value.length > 20){
+        return false;
+    } else return true;
+} , 'Cannot add more than 20 course sections.');
 
 const courseModel : mongoose.Model<CourseSchemaType> = mongoose.model('Course' , courseSchema);
 export default courseModel;
