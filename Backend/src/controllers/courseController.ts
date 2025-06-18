@@ -1,72 +1,8 @@
 import { Request , Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth";
-import { UploadedFile, FileArray } from 'express-fileupload';
-import {fileTypeFromFile} from 'file-type';
-import { uploadFile , isFileSupport } from "../utils/cloudinaryServies";
-import { createCourse , findCategory , createSection , updateCourseContent ,createSubSection , updateSubSection } from "../utils/courseServises";
+import { createCourse , findCategory , createSection ,createSubSection , updateSubSection, findSingleCourseByID } from "../utils/courseServises";
+import courseModel from "../models/courseModel";
 
-export const imageUploadToCloudinary = async(req : Request , res : Response) => {
-    try{
-        console.log("inside image upload")
-        const files = req.files as FileArray;
-        const imageFile = files.imageFile as UploadedFile;
-
-        if (!req.files || !('imageFile' in req.files)) {
-                 res.status(400).send({
-                 success: false,
-                 message: "imageFile required"
-                 });
-            }
-
-            console.log(imageFile);
-
-            // checking file type
-             const fileType =  await fileTypeFromFile(imageFile.tempFilePath);
-             console.log(fileType);
-
-             if(!fileType?.mime.startsWith('image')){
-                res.status(400).send({
-                    success : false,
-                    message : `${fileType?.mime} file is not supported`
-                })
-                return;
-             }
-
-             // now check imageFile supported or not
-            const imageSupport = ['jpg' , 'jpeg' , 'png' , 'svg'];
-            if(!isFileSupport(fileType.ext.toLowerCase() , imageSupport)){
-                 res.status(400).send({
-                    success : false,
-                    message : `image type ${fileType.ext.toLowerCase()} is not supported`
-                })
-                return;
-            }
-
-            // now upload to cloudinary
-            const uploadPayload = {file : imageFile , fileType: "image" as "image"}
-            const uploadImage = await uploadFile(uploadPayload);
-
-             res.status(200).send({
-                success : true,
-                message : "Image uploaded",
-                secure_url: uploadImage.secure_url
-              })
-            
-
-    } catch(err : unknown){
-        let errorMessage;
-            if(err instanceof Error){
-                errorMessage = err.message
-            } else if(typeof(err) === 'string'){
-                errorMessage = err
-            }
-            res.status(500).send({
-                success : false,
-                message : "Error comes in fileupload",
-                error : errorMessage
-            })
-    }
-}
 
 export const createCourseHandler = async(req : Request , res : Response) => {
     try{
@@ -115,16 +51,36 @@ export const createCourseHandler = async(req : Request , res : Response) => {
 
 export const createCourseSectionHandler = async(req : Request , res : Response) => {
     try{
-            const {sectionName , totalLecture , courseID} = req.body;
+            const {sectionName , courseID} = req.body;
 
             // validation is pending
 
+            // first find course
+            const getCourse = await courseModel.findById(courseID);
+            if(!getCourse){
+                res.status(400).send({
+                    success : false,
+                    message : "Course not found for this Id"
+                })
+                return;
+            }
+            // if course get
+            if(Array.isArray(getCourse?.courseContent) && getCourse.courseContent.length >= 20){
+                res.status(400).send({
+                    succes : false,
+                    message : "You can not create more than 20 sections"
+                })
+                return;
+            }
+
             // create subsection
-            const createSectionPayload = {sectionName , totalLecture};
-            const createCourseSection = await createSection(createSectionPayload);
+            const createCourseSection = await createSection(sectionName);
 
             // update course content in course model
-            await updateCourseContent(courseID ,createCourseSection._id);
+            getCourse.courseContent.push(courseID);
+            await getCourse.save();
+
+            // now return success responses
             res.status(200).send({
                 sucess : true,
                 message : "course section created",
@@ -146,14 +102,15 @@ export const createCourseSectionHandler = async(req : Request , res : Response) 
     }
 }
 
+// pending total-lecture and 20 sub-section validation...
 export const createCourseSubSectionHandler = async(req : Request , res : Response) => {
     try{
-            const {subSectionName , description , duration , courseSectionId} = req.body;
+            const {subSectionName , description , duration ,  videoUrl , courseSectionId} = req.body;
 
             // validate subsection pending...
 
             // create sub sections
-            const subSectionPayload = {subSectionName , description , duration};
+            const subSectionPayload = {subSectionName , description , duration , videoUrl};
             const createCourseSubSection = await createSubSection(subSectionPayload);
 
             // update subSection in course section doucument
@@ -179,3 +136,76 @@ export const createCourseSubSectionHandler = async(req : Request , res : Respons
             })
     }
 }
+
+// show all courses
+export const showallCoursesHandler = async(req : Request , res : Response) => {
+    try{
+
+        const findAllCourses = await courseModel.find({} , {courseName: true , courseDesc: true , instructor: true, whatYouWillLearn: true , courseContent: true ,price: true , thumbnail: true , category: true});
+
+        // if we find courses than return response
+        res.status(200).send({
+            success : true,
+            message : "Courses fetched",
+            courses : findAllCourses
+        })
+            
+    } catch(err : unknown){
+        let errorMessage;
+            if(err instanceof Error){
+                errorMessage = err.message
+            } else if(typeof(err) === 'string'){
+                errorMessage = err
+            }
+            res.status(500).send({
+                success : false,
+                message : "Error comes in course sub-section",
+                error : errorMessage
+            })
+    }
+}
+
+export const getSingleCourseHandler = async(req : Request , res : Response) => {
+    try{
+
+        const userReq = req as AuthenticatedRequest;
+        const {userId} = userReq.user;
+        const {courseId} = req.body;
+
+        // validate course exist for this id or not 
+        const getCourse = await findSingleCourseByID(courseId);
+
+        if(!getCourse){
+            res.status(400).send({
+                success : false,
+                message : "Course not exists for the provided Id"
+            })
+            return;
+        }
+
+        // now send success message with course
+        res.status(200).send({
+            success : true,
+            message : "course fetched",
+            course : getCourse
+        })
+            
+    } catch(err : unknown){
+        let errorMessage;
+            if(err instanceof Error){
+                errorMessage = err.message
+            } else if(typeof(err) === 'string'){
+                errorMessage = err
+            }
+            res.status(500).send({
+                success : false,
+                message : "Error comes in course sub-section",
+                error : errorMessage
+            })
+    }
+}
+
+// update section route pending
+// delete section route pending
+// update sub-section route pending
+// delete sub-section route pending 

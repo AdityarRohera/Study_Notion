@@ -15,6 +15,7 @@ const courseSectionSchema : Schema<CourseSectionType> = new Schema<CourseSection
     },
     totalLecture : {
         type : Number,
+        default : 0,
         required : true,
         trim : true
     },
@@ -27,6 +28,14 @@ const courseSectionSchema : Schema<CourseSectionType> = new Schema<CourseSection
         }
     ]
 })
+
+// subSection validation
+courseSectionSchema.path('subSection').validate(value => {
+    if(value.length >= 20){
+        return false
+    }
+    return true;
+} , 'Cannot add more than 20 course sub-sections.')
 
 const courseSectionModel : mongoose.Model<CourseSectionType> = mongoose.model('CourseSection' , courseSectionSchema);
 export default courseSectionModel;

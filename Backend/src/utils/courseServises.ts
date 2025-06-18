@@ -13,15 +13,11 @@ interface CreateCourseType {
     category : mongoose.Types.ObjectId;
 }
 
-interface CreateSectionType {
-    sectionName : string;
-    totalLecture : number;
-}
-
 interface CreateSubSectionType {
     subSectionName : string;
     description : string;
-    duration : number
+    duration : number;
+    videoUrl : string;
 }
 
 export const findCategory = async(categoryId :mongoose.Types.ObjectId) => {
@@ -33,18 +29,37 @@ export const createCourse = async(createCoursePayload : CreateCourseType) => {
     return createCourse;
 }
 
-export const createSection = async(createSectionPayload : CreateSectionType) => {
-    return await courseSectionModel.create(createSectionPayload);
+export const createSection = async(sectionName : string) => {
+    return await courseSectionModel.create(sectionName);
 }
 
-export const updateCourseContent = async (courseId : mongoose.Types.ObjectId , sectionId : mongoose.Types.ObjectId) => {
-    return await courseModel.findByIdAndUpdate(courseId , {$push : {courseContent : sectionId}} , {new : true});
-}
+// export const updateCourseContent = async (courseId : mongoose.Types.ObjectId , sectionId : mongoose.Types.ObjectId) => {
+//     return await courseModel.findByIdAndUpdate(
+//         courseId ,
+//         {
+//             $push : {courseContent : sectionId}
+//         } ,
+//         {new : true}).exec();
+// }
 
 export const createSubSection = async(subSectionPayload : CreateSubSectionType) => {
     return await courseSubSectionModel.create(subSectionPayload);
 }
 
 export const updateSubSection = async (courseSectionId : mongoose.Types.ObjectId , createCourseSubSectionId : mongoose.Types.ObjectId) => {
-    return await courseSectionModel.findByIdAndUpdate(courseSectionId , {$push : {subSection : createCourseSubSectionId}} , {new : true});
+    return await courseSectionModel.findByIdAndUpdate(
+        courseSectionId ,
+        {
+            $push : {subSection : createCourseSubSectionId},
+            $inc : {totalLecture : 1}
+        } ,
+        {new : true}).exec();
+}
+
+export const findCourseByID = async(courseId :mongoose.Types.ObjectId) => {
+    return await courseModel.findById(courseId);
+}
+
+export const findSingleCourseByID = async(courseId : mongoose.Types.ObjectId) => {
+    return await(await courseModel.findById(courseId).populate('courseContent'))?.populate('subSection');
 }

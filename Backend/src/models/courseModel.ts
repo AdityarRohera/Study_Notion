@@ -7,7 +7,7 @@ interface CourseSchemaType {
     courseDesc : string;
     instructor : ObjectId;
     whatYouWillLearn : string;
-    courseContent : ObjectId;
+    courseContent : ObjectId[];
     avgRating : number;
     TotalNumberRated : number;
     price : number;
@@ -66,12 +66,11 @@ const courseSchema : Schema<CourseSchemaType> = new Schema<CourseSchemaType>({
          required : true,
          trim : true
     },
-    category : [
-        {
+    category :{
             type : ObjectId,
-            ref : 'Tags'
-        }
-    ],
+            ref : 'category'
+    },
+
     numberOfStudentEnrolled : {
          type : Number,
          required : true,
@@ -81,7 +80,7 @@ const courseSchema : Schema<CourseSchemaType> = new Schema<CourseSchemaType>({
 })
 
 courseSchema.path('courseContent').validate((value) => {
-    if(value.length > 20){
+    if(value.length >= 20){
         return false;
     } else return true;
 } , 'Cannot add more than 20 course sections.');
