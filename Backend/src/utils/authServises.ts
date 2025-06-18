@@ -1,5 +1,5 @@
 import profileModel from "../models/ProfileModel"
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import userModel from "../models/userModel";
 
 interface ProfilePayloadType {
@@ -30,4 +30,8 @@ export const createUserFunc = async(createUserPayload : UserPayloadType) => {
 export const updateUser = async(password : string , email : string) => {
     const updatePassword = await userModel.findOneAndUpdate({email} , {password});
     return updatePassword;
+}
+
+export const findUserById = async(userId : mongoose.Types.ObjectId) => {
+    return await userModel.findById(userId);
 }

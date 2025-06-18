@@ -8,7 +8,7 @@ interface CourseSchemaType {
     instructor : ObjectId;
     whatYouWillLearn : string;
     courseContent : ObjectId[];
-    avgRating : number;
+    totalSum : number;
     TotalNumberRated : number;
     price : number;
     thumbnail : string;
@@ -46,15 +46,15 @@ const courseSchema : Schema<CourseSchemaType> = new Schema<CourseSchemaType>({
         trim : true
         }
     ],
-    avgRating : {
+    totalSum : {
         type : Number,
-        required : true,
-        trim : true
+        trim : true,
+        default : 0
     },
     TotalNumberRated : {
          type : Number,
-         required : true,
-         trim : true
+         trim : true,
+         default : 0
     },
     price : {
         type : Number,

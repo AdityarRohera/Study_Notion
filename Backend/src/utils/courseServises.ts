@@ -60,6 +60,11 @@ export const findCourseByID = async(courseId :mongoose.Types.ObjectId) => {
     return await courseModel.findById(courseId);
 }
 
-export const findSingleCourseByID = async(courseId : mongoose.Types.ObjectId) => {
-    return await(await courseModel.findById(courseId).populate('courseContent'))?.populate('subSection');
+// export const findSingleCourseByID = async(courseId : mongoose.Types.ObjectId) => {
+//     return await(await courseModel.findById(courseId).populate('courseContent'))?.populate('subSection') , {new : true};
+// }
+
+// or by sir 
+ export const findSingleCourseByID = async(courseId : mongoose.Types.ObjectId) => {
+    return await courseModel.findById(courseId).populate({path : 'courseContent' , populate: {path : 'subSection'}}) , {new : true};
 }

@@ -138,6 +138,7 @@ export const createCourseSubSectionHandler = async(req : Request , res : Respons
 }
 
 // show all courses
+// populate section and subsections is pending...
 export const showallCoursesHandler = async(req : Request , res : Response) => {
     try{
 
@@ -159,7 +160,7 @@ export const showallCoursesHandler = async(req : Request , res : Response) => {
             }
             res.status(500).send({
                 success : false,
-                message : "Error comes in course sub-section",
+                message : "Error comes in show all courses",
                 error : errorMessage
             })
     }
@@ -199,7 +200,7 @@ export const getSingleCourseHandler = async(req : Request , res : Response) => {
             }
             res.status(500).send({
                 success : false,
-                message : "Error comes in course sub-section",
+                message : "Error comes in course get single detailed course",
                 error : errorMessage
             })
     }
