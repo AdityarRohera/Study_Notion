@@ -12,3 +12,7 @@ interface RatingAndReviewType {
 export const createRatingAndReview = async(ratingAndReviewPayload : RatingAndReviewType) => {
     return await ratingAndReviewModel.create(ratingAndReviewPayload);
 }
+
+export const checkCourseReviewed = async(userId : mongoose.Types.ObjectId , courseId:mongoose.Types.ObjectId) => {
+    return await ratingAndReviewModel.findOne({userId , courseId});
+}

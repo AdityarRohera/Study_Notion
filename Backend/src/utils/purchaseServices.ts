@@ -32,3 +32,10 @@ export const verifyPaymentSignature = ({razorpay_order_id, razorpay_payment_id, 
      if(generatedSignature === razorpay_signature) return true;
      else return false;
 }
+
+export const checkPurchasedCourse = async(userId: mongoose.Types.ObjectId , courseId:mongoose.Types.ObjectId) => {
+   const findPurchased =  await purchaseModel.findOne({userId , courseId} , {new:true});
+   if(findPurchased?.status === 'Paid'){
+        return findPurchased
+   } else return null;
+}

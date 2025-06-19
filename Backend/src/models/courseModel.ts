@@ -1,5 +1,4 @@
 import mongoose,{Schema , Model, ObjectId} from "mongoose";
-import { resourceLimits } from "worker_threads";
 const {ObjectId} = Schema.Types
 
 interface CourseSchemaType {
