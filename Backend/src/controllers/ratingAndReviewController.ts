@@ -2,10 +2,9 @@ import { Request , Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth";
 import { findUserById } from "../utils/authServises";
 import { findCourseByID } from "../utils/courseServises";
-import { createRatingAndReview } from "../utils/ratingAndReviewServices";
 import ratingAndReviewModel from "../models/RatingAndReviewModel";
 import { checkPurchasedCourse } from "../utils/purchaseServices";
-import { checkCourseReviewed } from "../utils/ratingAndReviewServices";
+import {createRatingAndReview , checkCourseReviewed , getAllRatingOFCourse } from "../utils/ratingAndReviewServices";
 
 // now create handler
 export const createRatingHandler = async(req : Request , res : Response) => {
@@ -16,6 +15,25 @@ export const createRatingHandler = async(req : Request , res : Response) => {
         const {courseId , rating ,review} = req.body;
 
         // validation of body getting pending...
+
+          // validate userId and courseId
+        const findUser = await findUserById(userId);
+        if(!findUser){
+            res.status(400).send({
+                success : false,
+                message : "User not found for this user ID"
+            })
+            return;
+        }
+
+        const findCourse = await findCourseByID(courseId);
+        if(!findCourse){
+            res.status(400).send({
+                success : false,
+                message : "Course not found for this course ID"
+            })
+            return;
+        }
 
         // check if user already enrolled in course or not 
         const checkUserEnrolled = await checkPurchasedCourse(userId , courseId);
@@ -33,25 +51,6 @@ export const createRatingHandler = async(req : Request , res : Response) => {
             res.status(400).send({
                 success : false,
                 message : "You Have already reviewed this course"
-            })
-            return;
-        }
-
-        // validate userId and courseId
-        const findUser = await findUserById(userId);
-        if(!findUser){
-            res.status(400).send({
-                success : false,
-                message : "User not found for this user ID"
-            })
-            return;
-        }
-
-        const findCourse = await findCourseByID(courseId);
-        if(!findCourse){
-            res.status(400).send({
-                success : false,
-                message : "Course not found for this course ID"
             })
             return;
         }
@@ -103,7 +102,7 @@ export const getAllRatingHandler = async(req : Request , res : Response) => {
             return;
         }
 
-        const getAllRating = await ratingAndReviewModel.findById(courseId , {new:true})
+        const getAllRating = await getAllRatingOFCourse(courseId);
         res.status(200).send({
             success: true,
             message : "fetched all rating and reviews",

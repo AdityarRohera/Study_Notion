@@ -16,3 +16,10 @@ export const createRatingAndReview = async(ratingAndReviewPayload : RatingAndRev
 export const checkCourseReviewed = async(userId : mongoose.Types.ObjectId , courseId:mongoose.Types.ObjectId) => {
     return await ratingAndReviewModel.findOne({userId , courseId});
 }
+
+export const getAllRatingOFCourse = async(courseId : mongoose.Types.ObjectId) => {
+    return await ratingAndReviewModel.findById(courseId)
+    .populate({path: 'user' , select :"firstName lastName email"})
+    .populate({path : 'course' , select:"courseName"}).exec() , 
+    {new : true};
+}

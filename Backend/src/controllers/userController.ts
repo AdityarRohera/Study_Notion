@@ -201,9 +201,8 @@ const secret = process.env.TOKEN_SECRET;
 //         try{
 
 //             const {oldPassword , newpassword} = req.body;
-//             const userId = 
+        
 //             // check old password is correct or not
-//             const checkPassword = await userModel.findById()
             
 
 //         }catch(err){

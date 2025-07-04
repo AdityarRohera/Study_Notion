@@ -3,6 +3,7 @@ import { updateUser } from "../utils/authServises";
 import userModel from "../models/userModel";
 import crypto from 'crypto'
 import mailSender from "../utils/mailSender";
+import bcrypt from 'bcrypt';
 
 export const resetPasswordToken = async (req : Request , res : Response) => {
         try{
@@ -89,8 +90,10 @@ export const resetPasswordVerification = async (req : Request , res : Response) 
              // if user is verified now update user reset password and expiry 
               checkUser.resetPasswordToken = null;
               checkUser.resetPasswordExpires = null;
-              // we should becrypt password before saving it
-              checkUser.password = password;
+
+              // password bcrypt
+              const hashPassword = await bcrypt.hash(password ,10);
+              checkUser.password = hashPassword;
               await checkUser.save();
 
 
@@ -114,4 +117,3 @@ export const resetPasswordVerification = async (req : Request , res : Response) 
             })
         }
    }
- 

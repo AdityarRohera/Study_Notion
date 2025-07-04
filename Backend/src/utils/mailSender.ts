@@ -21,7 +21,7 @@ const mailSender = async({email , title , body} : mailSenderType) => {
             from : '"Study-Notion"<studynotion00@gmail.com>',
             to : `${email}`,
             subject : `${title}`,
-              html: body,
+            html: body,
        })
        console.log("Message sent:", info.messageId);
 

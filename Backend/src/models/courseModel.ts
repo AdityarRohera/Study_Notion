@@ -13,6 +13,7 @@ interface CourseSchemaType {
     thumbnail : string;
     category : ObjectId;
     numberOfStudentEnrolled : number;
+    status : string;
 }
 
 const courseSchema : Schema<CourseSchemaType> = new Schema<CourseSchemaType>({
@@ -74,6 +75,11 @@ const courseSchema : Schema<CourseSchemaType> = new Schema<CourseSchemaType>({
          type : Number,
          required : true,
          trim : true
+    },
+
+    status : {
+        type : String,
+        enum : ['Draft' , 'Published']
     }
 
 })

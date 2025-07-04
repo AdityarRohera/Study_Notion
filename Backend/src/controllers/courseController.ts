@@ -209,4 +209,4 @@ export const getSingleCourseHandler = async(req : Request , res : Response) => {
 // update section route pending
 // delete section route pending
 // update sub-section route pending
-// delete sub-section route pending 
+// delete sub-section route pending

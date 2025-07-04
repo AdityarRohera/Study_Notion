@@ -7,7 +7,7 @@ export interface AuthenticatedRequest extends Request {
         user : JwtPayload;
   }
 
-export const userAuth = async (req : Request , res : Response , next : Function) => {
+export const userAuth = (req : Request , res : Response , next : Function) => {
         try{
 
             const userReq = req as AuthenticatedRequest;
@@ -22,7 +22,7 @@ export const userAuth = async (req : Request , res : Response , next : Function)
             }
 
             // now verify token
-            const verifyToken = await jwt.verify(token , secret!) as JwtPayload
+            const verifyToken =  jwt.verify(token , secret!) as JwtPayload
             console.log(verifyToken);
 
             if(!verifyToken){
@@ -37,7 +37,7 @@ export const userAuth = async (req : Request , res : Response , next : Function)
 
             next();
 
-        }catch(err){
+        }catch(err : unknown){
             let errorMessage;
             if(err instanceof Error){
                 errorMessage = err.message
@@ -46,32 +46,40 @@ export const userAuth = async (req : Request , res : Response , next : Function)
             }
             res.status(500).send({
                 success : false,
-                message : "error comes in user auth",
+                message : "Error comes in user auth",
                 error : errorMessage
             })
         }
    }
 
-   export const isStudent = async(req : Request , res : Response , next : Function) => {
+   export const isStudent = (req : Request , res : Response , next : Function) => {
     try{
-         const userReq = req as AuthenticatedRequest;
+        const userReq = req as AuthenticatedRequest;
         if(userReq.user.account_Type !== "Student") {
-            return res.status(401).json({
+             res.status(401).json({
                 success:false,
                 message:'This is a protected route for Students only',
             });
+            return;
         }
         next();
     }
-    catch(error) {
-        return res.status(500).json({
-            success:false,
-            message:'User role cannot be verified, please try again'
-        })
+    catch(err) {
+        let errorMessage;
+         if(err instanceof Error){
+             errorMessage = err.message
+         } else if(typeof(err) === 'string'){
+             errorMessage = err
+         }
+         res.status(500).send({
+             success : false,
+             message : "Something wrong in isStudent auth",
+             error : errorMessage
+         })
     }
 }
 
-  export const isInstructor = async(req : Request , res : Response , next : Function) => {
+  export const isInstructor = (req : Request , res : Response , next : Function) => {
     try{
         const userReq = req as AuthenticatedRequest;
         if(userReq.user.accountType !== "Instructor") {
@@ -83,15 +91,22 @@ export const userAuth = async (req : Request , res : Response , next : Function)
         }
         next();
     }
-    catch(error) {
-        return res.status(500).json({
-            success:false,
-            message:'User role cannot be verified, please try again'
-        })
+    catch(err) {
+        let errorMessage;
+         if(err instanceof Error){
+             errorMessage = err.message
+         } else if(typeof(err) === 'string'){
+             errorMessage = err
+         }
+         res.status(500).send({
+             success : false,
+             message : "Something wrong in isInstructor auth",
+             error : errorMessage
+         })
     }
 }
 
-export const isAdmin = async (req : Request , res : Response , next : Function) => {
+export const isAdmin = (req : Request , res : Response , next : Function) => {
     try{    
            const userReq = req as AuthenticatedRequest;
            if(userReq.user.accountType !== "Admin") {
@@ -102,10 +117,17 @@ export const isAdmin = async (req : Request , res : Response , next : Function) 
            }
            next();
     }
-    catch(error) {
-       return res.status(500).json({
-           success:false,
-           message:'User role cannot be verified, please try again'
-       })
+    catch(err) {
+       let errorMessage;
+         if(err instanceof Error){
+             errorMessage = err.message
+         } else if(typeof(err) === 'string'){
+             errorMessage = err
+         }
+         res.status(500).send({
+             success : false,
+             message : "Something wrong in isAdmin auth",
+             error : errorMessage
+         })
     }
    }

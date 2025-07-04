@@ -3,6 +3,7 @@ import courseModel from "../models/courseModel";
 import categoryModel from "../models/categoryModel";
 import courseSectionModel from "../models/CourseSubSection";
 import courseSubSectionModel from "../models/CourseSubSection";
+import path from "path";
 
 interface CreateCourseType {
     courseName : string;
@@ -65,6 +66,17 @@ export const findCourseByID = async(courseId :mongoose.Types.ObjectId) => {
 // }
 
 // or by sir 
- export const findSingleCourseByID = async(courseId : mongoose.Types.ObjectId) => {
-    return await courseModel.findById(courseId).populate({path : 'courseContent' , populate: {path : 'subSection'}}) , {new : true};
+//  export const findSingleCourseByID = async(courseId : mongoose.Types.ObjectId) => {
+//     return await courseModel.findById(courseId).populate({path : 'courseContent' , populate: {path : 'subSection'}}) , {new : true};
+// }
+
+export const findSingleCourseByID = async(courseId : mongoose.Types.ObjectId) => {
+    return await courseModel.findById(courseId)
+    .populate({
+        path : 'instructor' , populate : {path: 'additional_info'}
+    })
+    .populate({
+        path : 'courseContent' , populate : {path : 'subSection'}
+    }). exec() ,
+    {new : true};
 }

@@ -94,9 +94,11 @@ export const getAllCoursesOfCategory = async(req : Request , res : Response) => 
         res.status(200).send({
             success : true,
             message : "courses fetched for particular category",
-            categoryCourses : findCategoryCourses,
-            someMoreCourses : findMorecourses,
-            topSellingCourses : findTopSellingCourses
+            data : {
+                categoryCourses : findCategoryCourses,
+                someMoreCourses : findMorecourses,
+                topSellingCourses : findTopSellingCourses
+            }
         })
 
 
