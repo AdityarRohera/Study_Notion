@@ -4,7 +4,7 @@ const {ObjectId} = Schema.Types
 interface CourseSectionType {
     sectionName : string;
     totalLecture : number;
-    subSection : ObjectId;
+    subSection : ObjectId[];
 }
 
 const courseSectionSchema : Schema<CourseSectionType> = new Schema<CourseSectionType>({
@@ -16,7 +16,6 @@ const courseSectionSchema : Schema<CourseSectionType> = new Schema<CourseSection
     totalLecture : {
         type : Number,
         default : 0,
-        required : true,
         trim : true
     },
     subSection : [
@@ -37,5 +36,5 @@ courseSectionSchema.path('subSection').validate(value => {
     return true;
 } , 'Cannot add more than 20 course sub-sections.')
 
-const courseSectionModel : mongoose.Model<CourseSectionType> = mongoose.model('CourseSection' , courseSectionSchema);
+const courseSectionModel : mongoose.Model<CourseSectionType> = mongoose.model('courseSection' , courseSectionSchema);
 export default courseSectionModel;

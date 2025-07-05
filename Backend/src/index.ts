@@ -25,10 +25,12 @@ import userRouter from './routes/userRoute';
 import courseRouter from './routes/courseRoute';
 import uploadRouter from './routes/fileUploadRoute';
 import contactRoute from './routes/contactUsRoute';
+import categoryRoute from './routes/categoryRoute';
 app.use('/api/v1/user' , userRouter);
-app.use('/api/v1' , courseRouter);
+app.use('/api/v1/course' , courseRouter);
 app.use('/api/v1/upload' , uploadRouter);
-app.use('api/v1' , contactRoute);
+app.use('/api/v1' , contactRoute);
+app.use('/api/v1' , categoryRoute);
 
 
 app.listen(port, () => {

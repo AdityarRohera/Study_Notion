@@ -6,7 +6,7 @@ interface CourseSchemaType {
     courseDesc : string;
     instructor : ObjectId;
     whatYouWillLearn : string;
-    courseContent : ObjectId[];
+    courseContent : mongoose.Types.ObjectId[];
     totalSum : number;
     TotalNumberRated : number;
     price : number;
@@ -41,7 +41,7 @@ const courseSchema : Schema<CourseSchemaType> = new Schema<CourseSchemaType>({
     courseContent : [
         {
         type : ObjectId,
-        ref : 'CourseSection',
+        ref : 'courseSection',
         required : true,
         trim : true
         }
@@ -73,7 +73,6 @@ const courseSchema : Schema<CourseSchemaType> = new Schema<CourseSchemaType>({
 
     numberOfStudentEnrolled : {
          type : Number,
-         required : true,
          trim : true
     },
 
@@ -90,5 +89,5 @@ courseSchema.path('courseContent').validate((value) => {
     } else return true;
 } , 'Cannot add more than 20 course sections.');
 
-const courseModel : mongoose.Model<CourseSchemaType> = mongoose.model('Course' , courseSchema);
+const courseModel : mongoose.Model<CourseSchemaType> = mongoose.model('course' , courseSchema);
 export default courseModel;

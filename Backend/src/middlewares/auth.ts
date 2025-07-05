@@ -23,7 +23,7 @@ export const userAuth = (req : Request , res : Response , next : Function) => {
 
             // now verify token
             const verifyToken =  jwt.verify(token , secret!) as JwtPayload
-            console.log(verifyToken);
+            // console.log(verifyToken , "Inside auth -> verifyToken");
 
             if(!verifyToken){
             res.status(403).send({
@@ -55,7 +55,7 @@ export const userAuth = (req : Request , res : Response , next : Function) => {
    export const isStudent = (req : Request , res : Response , next : Function) => {
     try{
         const userReq = req as AuthenticatedRequest;
-        if(userReq.user.account_Type !== "Student") {
+        if(userReq.user.role !== "Student") {
              res.status(401).json({
                 success:false,
                 message:'This is a protected route for Students only',
@@ -82,7 +82,9 @@ export const userAuth = (req : Request , res : Response , next : Function) => {
   export const isInstructor = (req : Request , res : Response , next : Function) => {
     try{
         const userReq = req as AuthenticatedRequest;
-        if(userReq.user.accountType !== "Instructor") {
+        // console.log(userReq.user);
+        // console.log(userReq.user.accountType , typeof(userReq.user.accountType));
+        if(userReq.user.role !== "Instructor") {
              res.status(401).json({
                 success:false,
                 message:'This is a protected route for Instructor only',
@@ -109,7 +111,7 @@ export const userAuth = (req : Request , res : Response , next : Function) => {
 export const isAdmin = (req : Request , res : Response , next : Function) => {
     try{    
            const userReq = req as AuthenticatedRequest;
-           if(userReq.user.accountType !== "Admin") {
+           if(userReq.user.role !== "Admin") {
                return res.status(401).json({
                    success:false,
                    message:'This is a protected route for Admin only',

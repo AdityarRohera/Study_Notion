@@ -31,6 +31,7 @@ const secret = process.env.TOKEN_SECRET;
 
             // save tempory to db
             const otpSave = await OtpModel.create({email , otp});
+            console.log(otpSave);
 
                  // send otp to mail
                   const title = 'Your otp code'

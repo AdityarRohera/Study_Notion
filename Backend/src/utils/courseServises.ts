@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import courseModel from "../models/courseModel";
 import categoryModel from "../models/categoryModel";
-import courseSectionModel from "../models/CourseSubSection";
+import courseSectionModel from "../models/courseSectionModel";
 import courseSubSectionModel from "../models/CourseSubSection";
 import path from "path";
 
@@ -31,7 +31,7 @@ export const createCourse = async(createCoursePayload : CreateCourseType) => {
 }
 
 export const createSection = async(sectionName : string) => {
-    return await courseSectionModel.create(sectionName);
+    return await courseSectionModel.create({sectionName});
 }
 
 // export const updateCourseContent = async (courseId : mongoose.Types.ObjectId , sectionId : mongoose.Types.ObjectId) => {
@@ -77,6 +77,5 @@ export const findSingleCourseByID = async(courseId : mongoose.Types.ObjectId) =>
     })
     .populate({
         path : 'courseContent' , populate : {path : 'subSection'}
-    }). exec() ,
-    {new : true};
+    }). exec()
 }

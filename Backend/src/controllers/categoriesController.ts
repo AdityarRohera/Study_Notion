@@ -5,13 +5,15 @@ import courseModel from "../models/courseModel";
 
 export const createCategory = async(req : Request , res : Response) => {
     try{
-        const {name , desc} = req.body;
+        const {name} = req.body;
 
-        const createTag = await categoryModel.create({name , desc});
+        // name validattion is pending
+
+        const createTag = await categoryModel.create({name});
         res.status(200).send({
             success : true,
             message : "Tag created",
-            tag : createTag.name
+            category : createTag.name
         })
 
     } catch(err : unknown){
@@ -36,7 +38,7 @@ export const getAllCategoies = async(req : Request , res : Response) => {
         res.status(200).send({
             success : true,
             message : "Tag fatched",
-            tag : getCategories
+            categories : getCategories
         })
 
     } catch(err : unknown){
@@ -54,6 +56,7 @@ export const getAllCategoies = async(req : Request , res : Response) => {
     }
 }
 
+// testing pending
 export const getAllCoursesOfCategory = async(req : Request , res : Response) => {
     try{
 

@@ -2,6 +2,8 @@ import { Request , Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth";
 import { createCourse , findCategory , createSection ,createSubSection , updateSubSection, findSingleCourseByID } from "../utils/courseServises";
 import courseModel from "../models/courseModel";
+import mongoose from "mongoose";
+import courseSectionModel from "../models/courseSectionModel";
 
 
 export const createCourseHandler = async(req : Request , res : Response) => {
@@ -51,12 +53,14 @@ export const createCourseHandler = async(req : Request , res : Response) => {
 
 export const createCourseSectionHandler = async(req : Request , res : Response) => {
     try{
-            const {sectionName , courseID} = req.body;
+            const {sectionName , courseId} = req.body;
 
             // validation is pending
 
             // first find course
-            const getCourse = await courseModel.findById(courseID);
+            const course_Id = new mongoose.Types.ObjectId(courseId);
+            // console.log("Error in coversion -> " , course_Id , typeof(course_Id));
+            const getCourse = await courseModel.findById(course_Id);
             if(!getCourse){
                 res.status(400).send({
                     success : false,
@@ -77,7 +81,7 @@ export const createCourseSectionHandler = async(req : Request , res : Response) 
             const createCourseSection = await createSection(sectionName);
 
             // update course content in course model
-            getCourse.courseContent.push(courseID);
+            getCourse.courseContent.push(createCourseSection._id);
             await getCourse.save();
 
             // now return success responses
@@ -114,7 +118,17 @@ export const createCourseSubSectionHandler = async(req : Request , res : Respons
             const createCourseSubSection = await createSubSection(subSectionPayload);
 
             // update subSection in course section doucument
-            await updateSubSection(courseSectionId , createCourseSubSection._id);
+           const updateSubSec =  await updateSubSection(new mongoose.Types.ObjectId(courseSectionId) , createCourseSubSection._id);
+
+           if(!updateSubSec){
+            res.status(400).send({
+                    success : false,
+                    message : "Invalid course-section Id"
+                })
+                return;
+           }
+
+           // Now send success response
             res.status(200).send({
                 success : true,
                 message : "course sub-section created",
@@ -170,11 +184,11 @@ export const getSingleCourseHandler = async(req : Request , res : Response) => {
     try{
 
         const userReq = req as AuthenticatedRequest;
-        const {userId} = userReq.user;
+        // const {userId} = userReq.user;
         const {courseId} = req.body;
 
         // validate course exist for this id or not 
-        const getCourse = await findSingleCourseByID(courseId);
+        const getCourse = await findSingleCourseByID(new mongoose.Types.ObjectId(courseId));
 
         if(!getCourse){
             res.status(400).send({

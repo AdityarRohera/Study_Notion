@@ -4,9 +4,10 @@ import { userAuth , isInstructor } from '../middlewares/auth';
 
 
 // import course handler here
-import { imageUploadToCloudinary } from '../controllers/uploadToCloudinaryController';
+import { imageUploadToCloudinary , videoUploadToCloudinary } from '../controllers/uploadToCloudinaryController';
 // , userAuth , isInstructor 
-uploadRouter.post('/imageUpload', imageUploadToCloudinary);
+uploadRouter.post('/image-upload', userAuth , isInstructor , imageUploadToCloudinary);
+uploadRouter.post('/video-upload', userAuth , isInstructor , videoUploadToCloudinary);
 // uploadRouter.post('/videoUpload')
 uploadRouter.get('/test' , (req , res) => {res.send({test : "pass"})});
 
