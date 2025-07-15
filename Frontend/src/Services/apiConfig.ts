@@ -1,6 +1,7 @@
 
 export const USER_API_ENDPOINT = {
-    LOGIN : '/user/login',
+    SEND_OTP : '/user/send-otp',
+    LOGIN : '/user/signin',
     SIGNUP : '/user/signup',
 };
 

@@ -71,7 +71,7 @@ function NavBar() {
 
 
   return (
-    <div className="border-b-1 bg-black text-white text-[20px] flex gap-[200px] items-center p-3 px-[150px] pointer-coarse: h-[70px] relative">
+    <div className="border-b-1 bg-black text-white text-[20px] flex gap-[200px] items-center p-3 px-[150px] pointer-coarse: min-h-[8vh] relative">
 
         {/* For Logo */}
       <div className="w-[500px] ">
@@ -101,7 +101,7 @@ function NavBar() {
 
         {/* catalog */}
         <div className={`group`}>
-          <div className={`flex items-center gap-1 h-[70px] justify-end`}>
+          <div className={`flex items-center gap-1 h-[8vh] justify-end`}>
               <p>Catalog</p>
               <IoIosArrowDown />
           </div>

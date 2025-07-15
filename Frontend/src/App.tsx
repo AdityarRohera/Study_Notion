@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import NoPage from "./pages/NoPage";
+import VerifyOTP from "./pages/VerifyOTP";
 
 
 
@@ -34,6 +35,8 @@ function App() {
          <Route path="/dashboard" element={<Dashboard />} />
          <Route path={'/catalog/:catalogName'} element={<div>Hello</div>}/> 
          <Route path="*" element={<NoPage />} />
+
+         <Route path="/verify-otp" element={<VerifyOTP/>}/>
     </Routes>
     </div>
   )

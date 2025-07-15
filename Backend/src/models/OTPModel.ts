@@ -19,8 +19,8 @@ const otpSchema : Schema<OTPSchemaType> = new Schema<OTPSchemaType>({
     },
     createdAt : {
         type : Date,
-        default : Date.now(),
-        expires : 10*60
+        default : Date.now,
+        expires : 5*60
     }
 })
 

@@ -63,6 +63,7 @@ const secret = process.env.TOKEN_SECRET;
         try{
 
             const {firstName , lastName , password , contact_no ,account_type , email , otp} = req.body;
+            console.log(contact_no , typeof(contact_no));
 
             // input validation by zod pending
             // check user already exist or not
@@ -157,14 +158,14 @@ const secret = process.env.TOKEN_SECRET;
                  return;
              }
 
-             // check for user role
-             if(checkUser.account_type !== account_type){
-                res.status(400).send({
-                    success : false,
-                    message : "User role is incorrect"
-                })
-                return;
-             }
+            //  // check for user role
+            //  if(checkUser.account_type !== account_type){
+            //     res.status(400).send({
+            //         success : false,
+            //         message : "User role is incorrect"
+            //     })
+            //     return;
+            //  }
 
             // now create token for user
              const token = secret ? jwt.sign({
@@ -175,11 +176,12 @@ const secret = process.env.TOKEN_SECRET;
              console.log(token);
 
              // now send token to user
-             if(!token) return;
+            //  if(!token) return;
              res.cookie("token" , token , { expires: new Date(Date.now() + 3*24*60*60*1000) , httpOnly: true}).status(200).send({
                 success : true,
                 message : "login successfully",
-                token : token
+                token : token,
+                user :  checkUser
              })
 
 

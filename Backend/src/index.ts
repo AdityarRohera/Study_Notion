@@ -4,12 +4,18 @@ import dotenv from 'dotenv'
 dotenv.config();
 const port = process.env.PORT || 3000;
 import fileUpload from 'express-fileupload'
+import cors from 'cors'
 
 // middlewares
 app.use(express.json());
 app.use(fileUpload({
    useTempFiles : true,
   tempFileDir : '/tmp/'
+}))
+
+app.use(cors({
+  origin : "http://localhost:5173",
+   optionsSuccessStatus: 200
 }))
 
 // database connect here

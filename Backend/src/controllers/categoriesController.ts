@@ -2,6 +2,7 @@ import categoryModel from "../models/categoryModel";
 import { Request , Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth";
 import courseModel from "../models/courseModel";
+import mongoose from "mongoose";
 
 export const createCategory = async(req : Request , res : Response) => {
     try{
@@ -59,8 +60,14 @@ export const getAllCategoies = async(req : Request , res : Response) => {
 // testing pending
 export const getAllCoursesOfCategory = async(req : Request , res : Response) => {
     try{
+        const categoryIdString = req.query.categoryId;
 
-        const {categoryId} = req.body;
+        if (!categoryIdString || typeof categoryIdString !== 'string') {
+            res.status(400).json({ message: "Invalid category ID" });
+            return;
+        }
+
+        const categoryId = new mongoose.Types.ObjectId(categoryIdString);
 
         // validate the structure of id is pending...
 
