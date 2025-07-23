@@ -3,3 +3,13 @@
 .active {
    color: yellow;
 }
+
+/* Hide scrollbar for elements with class "scrollbar-hidden" */
+.scrollbar-hidden {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}

@@ -11,9 +11,12 @@ import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
-import Dashboard from "./pages/Dashboard";
 import NoPage from "./pages/NoPage";
 import VerifyOTP from "./pages/VerifyOTP";
+import EnrolledCourses from "./pages/EnrolledCourses";
+import MyProfile from "./pages/MyProfile";
+import Catalog from "./pages/Catalog";
+import FullCourse from "./pages/FullCourse";
 
 
 
@@ -32,8 +35,11 @@ function App() {
          <Route path="/contact" element={<ContactUs />} />
          <Route path="/login" element={<Login />} />
          <Route path="/signup" element={<SignUp />} />
-         <Route path="/dashboard" element={<Dashboard />} />
-         <Route path={'/catalog/:catalogName'} element={<div>Hello</div>}/> 
+         <Route path="/dashboard" element={<Home />} />
+         <Route path="/dashboard/enrolled-courses" element={< EnrolledCourses/>} />
+         <Route path="/dashboard/my-profile" element={<MyProfile />} />
+         <Route path={'/catalog/:catalogName'} element={<Catalog/>}/>
+         <Route path={'/course/:id'} element={<FullCourse/>}/>
          <Route path="*" element={<NoPage />} />
 
          <Route path="/verify-otp" element={<VerifyOTP/>}/>

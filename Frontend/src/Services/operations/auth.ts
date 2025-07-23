@@ -9,12 +9,11 @@ import { USER_API_ENDPOINT } from "../apiConfig";
 
 
 export const sendOTP = async(dispatch : any , email : string , Navigate : any) : Promise<void> => {
-    try{
 
-        // send OTP code
-        const toastId = toast.loading("Loading...");
+     const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
 
+    try{
         // api call
         const response = await apiConnector(
             { method : 'POST' ,
@@ -33,17 +32,19 @@ export const sendOTP = async(dispatch : any , email : string , Navigate : any) :
            Navigate('/verify-otp');
         }
 
-    } catch(err){
+    } catch(err : any){
+        const {message} = err.response.data
+        toast.error(`${message}` , {id : toastId});
         console.log(err);
     }
 }
 
 
 export const signup = async(dispatch : any , {account_type , firstName , lastName , email , createPassword , otp} : any , Navigate : any) : Promise<any> => {
-    try{    
-
-         const toastId = toast.loading("Loading...")
+     const toastId = toast.loading("Loading...")
          dispatch(setLoading(true));
+
+    try{    
          
          const response = await apiConnector(
             {method :'POST' ,
@@ -61,18 +62,20 @@ export const signup = async(dispatch : any , {account_type , firstName , lastNam
            Navigate('/login');
         }
 
-    } catch(err) {
+    } catch(err : any) {
+        const {message} = err.response.data
+        toast.error(`${message}` , {id : toastId});
         console.log(err)
     }
 }
 
 
 export const login = async(dispatch : any , {email , password} : any , Navigate : any) : Promise<any> => {
-    try{    
 
-         const toastId = toast.loading("Loading...")
-         dispatch(setLoading(true));
-         
+     const toastId = toast.loading("Loading...");
+      dispatch(setLoading(true));
+      
+    try{    
          const response = await apiConnector(
             {method :'POST' ,
              url :`${BASE_URL}${USER_API_ENDPOINT.LOGIN}`,
@@ -80,7 +83,7 @@ export const login = async(dispatch : any , {email , password} : any , Navigate 
              headers : {'X-Requested-With': 'XMLHttpRequest'}
             });
 
-         if(response.data){
+         if(response){
 
             const {firstName , lastName , email , contact_no , account_type , _id} = response.data.user
 
@@ -106,11 +109,13 @@ export const login = async(dispatch : any , {email , password} : any , Navigate 
             
             // Navigate to dashboard
            await setTimeout(() => {
-             Navigate('/dashboard');
+             Navigate('/dashboard/my-profile');
            } , 2000);
         }
 
-    } catch(err) {
+    } catch(err : any) {
+        const {message} = err.response.data
+        toast.error(`${message}` , {id : toastId});
         console.log(err)
     }
 }

@@ -22,6 +22,7 @@ interface CreateSubSectionType {
 }
 
 export const findCategory = async(categoryId :mongoose.Types.ObjectId) => {
+    console.log("Inside FindCategory function -> " , categoryId , typeof(categoryId))
     return await categoryModel.findById(categoryId);
 }
 

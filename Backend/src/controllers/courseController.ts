@@ -9,14 +9,17 @@ import courseSectionModel from "../models/courseSectionModel";
 export const createCourseHandler = async(req : Request , res : Response) => {
     try{
             const userReq = req as AuthenticatedRequest;
-            const {userId} = userReq.user;
-            const {courseName , courseDesc , whatYouWillLearn , price , thumbnail , category} = req.body;
+            // const {userId} = userReq.user;
+            const {courseName , courseDesc , whatYouWillLearn , price , thumbnail , category , user} = req.body;
 
             // validation is pending
+            const categoryId = new mongoose.Types.ObjectId(category);
+            console.log(categoryId)
+            const userId = new mongoose.Types.ObjectId(user);
 
             // check for category exist or not 
-              const checkCategory = await findCategory(category);
-              if(checkCategory){
+              const checkCategory = await findCategory(categoryId);
+              if(!checkCategory){
                 res.status(400).send({
                     success : false,
                     message : "category not found"
@@ -185,7 +188,7 @@ export const getSingleCourseHandler = async(req : Request , res : Response) => {
 
         const userReq = req as AuthenticatedRequest;
         // const {userId} = userReq.user;
-        const {courseId} = req.body;
+        const courseId = req.params['id'];
 
         // validate course exist for this id or not 
         const getCourse = await findSingleCourseByID(new mongoose.Types.ObjectId(courseId));

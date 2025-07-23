@@ -173,7 +173,7 @@ const secret = process.env.TOKEN_SECRET;
                role : checkUser.account_type
              } , secret, {expiresIn: '3d'}) : null;
 
-             console.log(token);
+            //  console.log(token);
 
              // now send token to user
             //  if(!token) return;

@@ -59,11 +59,12 @@ export const getAllCategoies = async(req : Request , res : Response) => {
 
 // testing pending
 export const getAllCoursesOfCategory = async(req : Request , res : Response) => {
-    try{
+    try{ 
+
         const categoryIdString = req.query.categoryId;
 
         if (!categoryIdString || typeof categoryIdString !== 'string') {
-            res.status(400).json({ message: "Invalid category ID" });
+            res.status(400).json({success : false ,  message: "Invalid category ID" });
             return;
         }
 
@@ -82,7 +83,9 @@ export const getAllCoursesOfCategory = async(req : Request , res : Response) => 
         }
 
         // if valide category then find courses for this category
-        const findCategoryCourses = await courseModel.find({category : categoryId} , {new:true});
+        const findCategoryCourses = await courseModel.find({category : categoryId})
+        .populate({path : 'instructor' , select : 'firstName lastName'}).exec();
+
         if(findCategoryCourses.length === 0){
             res.status(200).send({
                 success : true,
@@ -92,13 +95,16 @@ export const getAllCoursesOfCategory = async(req : Request , res : Response) => 
         }
 
         // if courses found now find some more courses for recommendation
-        const findMorecourses = await courseModel.find({category : {$ne : categoryId}} , {new: true})
+        const findMorecourses = await courseModel.find({category : {$ne : categoryId}})
+        .populate({path : 'instructor' , select : 'firstName lastName'})
         .sort({ 'created_at': -1 })
         .limit(5)
         .exec();
 
         // Now find top selling courses
-        const findTopSellingCourses = await courseModel.find({numberOfStudentEnrolled : {$gt : 5}} , {new: true}).exec();
+        const findTopSellingCourses = await courseModel.find({numberOfStudentEnrolled : {$gt : 5}})
+        .populate({path : 'instructor' , select : 'firstName lastName'})
+        .exec();
 
         // now send category response
         res.status(200).send({

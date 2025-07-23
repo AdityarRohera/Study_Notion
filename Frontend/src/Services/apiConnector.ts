@@ -5,7 +5,7 @@ interface ApiRequestConfig {
   url: string;
   bodyData?: any;
   headers?: Record<string, string>;
-  params?: Record<string, any>;
+  params?: any;
   id?: string | number;
 }
 

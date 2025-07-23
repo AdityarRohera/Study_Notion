@@ -9,6 +9,7 @@ import { apiConnector } from "../../Services/apiConnector";
 // import { setToken } from "../../features/slices/tokenSlice";
 // import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+// import axios from "axios";
 
 // react Icons import
 import { IoIosArrowDown } from "react-icons/io";
@@ -71,7 +72,7 @@ function NavBar() {
 
 
   return (
-    <div className="border-b-1 bg-black text-white text-[20px] flex gap-[200px] items-center p-3 px-[150px] pointer-coarse: min-h-[8vh] relative">
+    <div className="border-b-1 bg-black text-white text-[20px] flex gap-[200px] items-center mb-0 p-3 px-[150px] pointer-coarse: min-h-[8vh] relative">
 
         {/* For Logo */}
       <div className="w-[500px] ">
@@ -84,21 +85,6 @@ function NavBar() {
       <div className="flex items-center gap-6 w-[900px] pointer-coarse: h-[20px]">
         <NavLink to="/">Home</NavLink>
 
-        {/* <select defaultValue="" className="bg-black border min-w-[100px]" onChange={changeHandler}>
-
-          <option value="" disabled hidden>Catelog</option>
-
-          {
-            categories.map(category => {
-                 const {_id ,name} = category;
-              return <>
-                      <option key={_id} value={_id}>{name}</option>
-                     </>
-            })
-          }
-
-        </select> */}
-
         {/* catalog */}
         <div className={`group`}>
           <div className={`flex items-center gap-1 h-[8vh] justify-end`}>
@@ -110,15 +96,11 @@ function NavBar() {
           <div className="bg-white text-black font-medium flex flex-col gap-5 items-start p-5 pl-5 py-8 w-[320px]  min-h-[100px] absolute top-[100%] left-[35%] rounded-xl opacity-0  group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-200 z-50">
         
               {
-                 categories.map(category => {
+                 categories.map((category , index) => {
                      const {_id ,name} = category;
-                 return <>
-                      <div className="w-full h-15 items-center p-2 py-[15px] hover:bg-gray-300 rounded-xl">
-                        <Link to={`/catalog/${name}`} key={_id}>{name}</Link>
-                      </div>
-                     </>
+                      return  <Link className="w-full h-15 items-center p-2 py-[15px] hover:bg-gray-300 rounded-xl" to={`/catalog/${name}`} state={_id} key={index} >{name}</Link>      
                  })
-             }
+              }
     
           </div>
 
