@@ -1,29 +1,39 @@
 // import React from 'react'
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import StudyNotionLogo from '../../assets/logos/Logo-Full-Light.png';
-import { useEffect, useState } from "react";
-import { BASE_URL , CATEGORY_API_ENDPOINT } from "../../Services/apiConfig";
-import { useSelector } from "react-redux";
-import { type RootState } from "../../Services/strore";
-import { apiConnector } from "../../Services/apiConnector";
+import { useEffect, useRef, useState } from "react";
+// import { BASE_URL , CATEGORY_API_ENDPOINT } from "../../Services/apiConfig";
+// import { useSelector } from "react-redux";
+// import { type RootState } from "../../Services/strore";
+// import { apiConnector } from "../../Services/apiConnector";
 // import { setToken } from "../../features/slices/tokenSlice";
 // import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-// import axios from "axios";
+import { FiShoppingCart } from "react-icons/fi";
 
 // react Icons import
 import { IoIosArrowDown } from "react-icons/io";
+import { logout } from "../../Services/operations/auth";
+import { useNavigate } from "react-router-dom";
 
-// Interface here
-interface MyToken {
-  userId : object,
-  role : string
-}
+import { fatchCategories } from "../../Services/operations/common";
 
 function NavBar() {
-    const userInfo : MyToken |null = useSelector((state: RootState) => state.auth.user);
-    // const dispatch = useDispatch();
-    const [categories  , setCategories] = useState([]);
+
+  let user: { account_type: string } | null = null;
+
+  const userInfo = localStorage.getItem("user");
+
+  if (userInfo) {
+    user = JSON.parse(userInfo);
+  }
+     
+
+    const [categories  , setCategories] = useState<any>([]);
+    const location = useLocation();
+    const [visible , setVisible] = useState(false);
+    const profileRef = useRef<any>(null);
+    const navigate = useNavigate();
 
     // All functions
 
@@ -43,27 +53,22 @@ function NavBar() {
     // }
 
     const getCategories = async() => {
-        try{
-              const categoryPayload = {
-                method : 'GET' as 'GET',
-                url : `${BASE_URL}${CATEGORY_API_ENDPOINT.CATEGORIES}`,
-              }
-
-              const category = await apiConnector(categoryPayload);
-              if(category){
-                setCategories(category.data.categories)
-              }
-
-        } catch(error : any){
-           if (error.response) {
-                console.error('Server Error:', error.response.data);
-                } else if (error.request) {
-                  console.error('Network Error:', error.request);
-                } else {
-                  console.error('Other Error:', error.message);
-           }
+        const category = await fatchCategories();
+        if(categories){
+          setCategories(category);
         }
-    } 
+    }
+
+    const openProfileHandler = () => {
+        setVisible(true)
+    }
+
+    document.onclick = function(e:any) {
+        // console.log(e.target , e.target.id)
+        if(e.target.id !== 'profile'){
+          setVisible(false);
+        }
+    };
 
     // Hooks
     useEffect(() => {
@@ -72,7 +77,7 @@ function NavBar() {
 
 
   return (
-    <div className="border-b-1 bg-black text-white text-[20px] flex gap-[200px] items-center mb-0 p-3 px-[150px] pointer-coarse: min-h-[8vh] relative">
+    <div className="border-b-1 bg-black text-white text-[20px] flex gap-[100px] items-center mb-0 p-3 px-[150px] pointer-coarse: min-h-[8vh] relative">
 
         {/* For Logo */}
       <div className="w-[500px] ">
@@ -82,21 +87,22 @@ function NavBar() {
       </div>
 
       {/* Pages div */}
-      <div className="flex items-center gap-6 w-[900px] pointer-coarse: h-[20px]">
+      <div className="flex items-center gap-6 w-[600px] pointer-coarse: h-[20px] ml-[40px]">
         <NavLink to="/">Home</NavLink>
 
         {/* catalog */}
         <div className={`group`}>
           <div className={`flex items-center gap-1 h-[8vh] justify-end`}>
-              <p>Catalog</p>
+              <p className={`${location.pathname.split('/')[1] === `catalog` ? 'active' : ''}`}>Catalog</p>
               <IoIosArrowDown />
           </div>
 
           {/* Catalogs links */}
-          <div className="bg-white text-black font-medium flex flex-col gap-5 items-start p-5 pl-5 py-8 w-[320px]  min-h-[100px] absolute top-[100%] left-[35%] rounded-xl opacity-0  group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-200 z-50">
+          <div className="bg-white text-black font-medium flex flex-col gap-5 items-start p-5 pl-5 py-8 w-[320px]  min-h-[100px] absolute top-[100%] left-[40%] rounded-xl opacity-0  group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-200 z-50">
         
               {
-                 categories.map((category , index) => {
+                
+                 categories?.map((category : any , index : any) => {
                      const {_id ,name} = category;
                       return  <Link className="w-full h-15 items-center p-2 py-[15px] hover:bg-gray-300 rounded-xl" to={`/catalog/${name}`} state={_id} key={index} >{name}</Link>      
                  })
@@ -112,40 +118,44 @@ function NavBar() {
 
       {/* Authentication div */}
             
-                <div className="flex gap-5 ">
+                <div className=" flex gap-5 px-2  h-[30px] min-w-[250px]">
                   
+                  <div className="flex gap-7 items-center h-full pl-25">
+
                     {
-                      userInfo && userInfo.role === "Instructor" &&
-                      <div>
-                        <NavLink className="border" to="/dashboard">DashBoard Instructor</NavLink>
-                        <NavLink className="border border-white" to="/">Logout</NavLink>
-                      </div>
+                      user && user.account_type === "Student" &&
+                      <FiShoppingCart className="text-3xl cursor-pointer" />
                     }
-            
-    
+
+                    {/* profile */}
+
                     {
-                    userInfo && userInfo.role === "Admin" &&
-                    <div>
-                      <NavLink className="border" to="/dashboard">DashBoard Admin</NavLink>
-                      <NavLink className="border border-white" to="/">Logout</NavLink>
+                      user && 
+                      <div className="">
+                        
+                      <div ref={profileRef} onClick={openProfileHandler} className="cursor-pointer relative rounded-full ">
+                      <img id="profile" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmBs0YZevOEuYRwxd-bG_ttYxcHKeXIRpIhB-1e6yrZ-znl-hISmDqwak&s" className="border rounded-full w-[40px] flex justify-center items-center" alt="" />
+                      </div>
+
+                    <div className={`absolute top-[85%] right-[200px] bg-gray-500 text-white w-[120px] flex flex-col items-center justify-center h-[80px] rounded-xl p-1 ${!visible ? 'opacity-0' : ''}`}>
+                        <Link to={'/dashboard/my-profile'}>Dashboard</Link>
+                        <hr />
+                        <button className="cursor-pointer" onClick={() => logout(navigate)}>Logout</button>
+                    </div>
                     </div>
                     }
 
-                    {
-                      userInfo && userInfo.role === "Student" &&
-                      <div>
-                        <NavLink className="border" to="/dashboard">DashBoard</NavLink>
-                        <NavLink className="border border-white" to="/">Logout</NavLink>
-                      </div>
-                    }
+                    
+                  </div>
 
-                    {
-                      userInfo=== null &&
-                      <div className="flex gap-5 w-[250px]">
+                   
+                     {
+                      user=== null &&
+                      <div className="flex gap-5 justify-center items-center h-full pl-20 ">
                        <NavLink to="/login">Login</NavLink>
                        <NavLink to="/signup">Signup</NavLink>
                       </div>
-                    }
+                     }
 
                 </div>
 

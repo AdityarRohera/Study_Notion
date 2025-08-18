@@ -177,7 +177,7 @@ const secret = process.env.TOKEN_SECRET;
 
              // now send token to user
             //  if(!token) return;
-             res.cookie("token" , token , { expires: new Date(Date.now() + 3*24*60*60*1000) , httpOnly: true}).status(200).send({
+             res.cookie("token" , token , {  maxAge: 3 * 24 * 60 * 60 * 1000 , httpOnly: true}).status(200).send({
                 success : true,
                 message : "login successfully",
                 token : token,

@@ -8,6 +8,7 @@ import bcrypt from 'bcrypt';
 export const resetPasswordToken = async (req : Request , res : Response) => {
         try{
               const {email} = req.body;
+              console.log(email);
 
               // find user already exists or not
             const checkUser = await userModel.findOne({email});
@@ -24,11 +25,11 @@ export const resetPasswordToken = async (req : Request , res : Response) => {
              console.log(token);
 
              // create frontend url for send in mail
-             const url = `http://localhost:3000/update-password/${token}`;
+             const url = `http://localhost:5173/update-password/${token}`;
 
              // now save this token in user model with expiry time 
              checkUser.resetPasswordToken = token;
-             checkUser.resetPasswordExpires = new Date(Date.now() + 5 * 60);
+             checkUser.resetPasswordExpires = new Date(Date.now() + 5 * 60 * 1000);
              // now save it
              await checkUser.save();
 
@@ -56,7 +57,7 @@ export const resetPasswordToken = async (req : Request , res : Response) => {
             }
             res.status(500).send({
                 success : false,
-                message : "error comes in send otp",
+                message : "error comes in sending reset password link",
                 error : errorMessage
             })
         }
@@ -68,6 +69,8 @@ export const resetPasswordVerification = async (req : Request , res : Response) 
 
                // find user already exists or not
             const checkUser = await userModel.findOne({resetPasswordToken : token});
+            console.log(checkUser);
+
              // now verify user token
              if(!checkUser){
                 res.status(400).send({
@@ -86,6 +89,7 @@ export const resetPasswordVerification = async (req : Request , res : Response) 
                 });
                 return;
              }
+
 
              // if user is verified now update user reset password and expiry 
               checkUser.resetPasswordToken = null;

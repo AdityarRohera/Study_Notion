@@ -78,5 +78,9 @@ export const findSingleCourseByID = async(courseId : mongoose.Types.ObjectId) =>
     })
     .populate({
         path : 'courseContent' , populate : {path : 'subSection'}
-    }). exec()
+    })
+    .populate({
+        path : 'category' , select : 'name'
+    })
+    . exec()
 }

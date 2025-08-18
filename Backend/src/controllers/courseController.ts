@@ -12,6 +12,8 @@ export const createCourseHandler = async(req : Request , res : Response) => {
             // const {userId} = userReq.user;
             const {courseName , courseDesc , whatYouWillLearn , price , thumbnail , category , user} = req.body;
 
+            console.log("Details -> " , courseName, courseDesc , whatYouWillLearn , price , thumbnail , category , user);
+
             // validation is pending
             const categoryId = new mongoose.Types.ObjectId(category);
             console.log(categoryId)
@@ -223,7 +225,32 @@ export const getSingleCourseHandler = async(req : Request , res : Response) => {
     }
 }
 
+
+
 // update section route pending
+
+// export const updateCourse = async(res : Response , Req : Request) => {
+//     try{
+
+//         // const {courseId} = req.body;
+
+//         // first find course by this course id
+
+
+//     } catch(err : unknown){
+//         let errorMessage;
+//             if(err instanceof Error){
+//                 errorMessage = err.message
+//             } else if(typeof(err) === 'string'){
+//                 errorMessage = err
+//             }
+//             res.status(500).send({
+//                 success : false,
+//                 message : "Error comes in course get single detailed course",
+//                 error : errorMessage
+//             })
+//     }
+// }
 // delete section route pending
 // update sub-section route pending
 // delete sub-section route pending

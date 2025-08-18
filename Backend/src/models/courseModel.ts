@@ -68,14 +68,12 @@ const courseSchema : Schema<CourseSchemaType> = new Schema<CourseSchemaType>({
     },
     category :{
             type : ObjectId,
-            ref : 'category'
+            ref : 'categories'
     },
-
     numberOfStudentEnrolled : {
          type : Number,
          trim : true
     },
-
     status : {
         type : String,
         enum : ['Draft' , 'Published']

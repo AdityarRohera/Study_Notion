@@ -19,7 +19,7 @@ export const sendOTP = async(dispatch : any , email : string , Navigate : any) :
             { method : 'POST' ,
               url : `${BASE_URL}${USER_API_ENDPOINT.SEND_OTP}`,
               bodyData : {email},
-              headers : {'X-Requested-With': 'XMLHttpRequest'}
+              headers : {'X-Requested-With': 'XMLHttpRequest' ,token: `${localStorage.getItem('token')}`} // token not taken direct (fix pending)
             })
         console.log(response);
 
@@ -49,7 +49,7 @@ export const signup = async(dispatch : any , {account_type , firstName , lastNam
          const response = await apiConnector(
             {method :'POST' ,
              url :`${BASE_URL}${USER_API_ENDPOINT.SIGNUP}`,
-             bodyData : {account_type , firstName , lastName , email , password : createPassword , otp , contact_no : 999999999},
+             bodyData : {account_type , firstName , lastName , email , password : createPassword , otp , contact_no : Math.floor((Math.random() * 10) + 1)},
              headers : {'X-Requested-With': 'XMLHttpRequest'}
             });
 
@@ -100,6 +100,8 @@ export const login = async(dispatch : any , {email , password} : any , Navigate 
                             isAuthenticated : true,
                         }
                     ))
+            console.log(response.data.token);
+            localStorage.setItem("token" ,  response.data.token);
 
             toast.success("Success!", {
                 id: toastId,
@@ -111,6 +113,73 @@ export const login = async(dispatch : any , {email , password} : any , Navigate 
            await setTimeout(() => {
              Navigate('/dashboard/my-profile');
            } , 2000);
+        }
+
+    } catch(err : any) {
+        const {message} = err.response.data
+        toast.error(`${message}` , {id : toastId});
+        console.log(err)
+    }
+}
+
+export const logout = (navigate : any) => {
+    setUser(null);
+    localStorage.clear();
+    navigate('/login')
+}
+
+export const resetPassword = async(dispatch : any , {email} : any) : Promise<any> => {
+
+     const toastId = toast.loading("Loading...");
+      dispatch(setLoading(true));
+      
+    try{    
+         
+        const res = await apiConnector({
+                                         method : 'POST',
+                                         url : `${BASE_URL}${USER_API_ENDPOINT.RESET_PASSWORD}`,
+                                         bodyData : {email}
+                                       })
+        console.log(res);
+
+        if(res.data){
+             toast.success("Success!", {
+                id: toastId,
+             });
+
+           dispatch(setLoading(false));
+        }
+
+    } catch(err : any) {
+        const {message} = err.response.data
+        toast.error(`${message}` , {id : toastId});
+        console.log(err)
+    }
+}
+
+export const verifyResetPassword = async(dispatch : any , navigate : any , {password , token} : any) : Promise<any> => {
+
+
+     const toastId = toast.loading("Loading...");
+      dispatch(setLoading(true));
+      
+    try{    
+         
+        const res = await apiConnector({
+                                         method : 'POST',
+                                         url : `${BASE_URL}${USER_API_ENDPOINT.VERIFY_RESET_PASSWORD}`,
+                                         bodyData : {password , token}
+                                       })
+        console.log(res);
+
+        if(res.data){
+             toast.success("Success!", {
+                id: toastId,
+             });
+
+           dispatch(setLoading(false));
+           
+            navigate('/login')
         }
 
     } catch(err : any) {

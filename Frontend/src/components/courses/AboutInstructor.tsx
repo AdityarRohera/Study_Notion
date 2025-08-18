@@ -8,7 +8,7 @@ function AboutInstructor() {
       <div className="flex gap-2">
         {/* profile picture */}
         <div>
-            <img className="rounded-full" src="" alt="img" />
+            <img className="rounded-full" src={undefined} alt="img" />
         </div>
         <span>Instructor Name</span>
       </div>

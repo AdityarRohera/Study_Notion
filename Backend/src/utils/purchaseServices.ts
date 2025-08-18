@@ -4,9 +4,9 @@ import crypto from 'crypto';
 
 
 interface CreateOrderType {
-    userId : mongoose.Types.ObjectId,
-    courseId : mongoose.Types.ObjectId,
-    amount : number,
+    userId : mongoose.Types.ObjectId;
+    courseId : mongoose.Types.ObjectId;
+    amount : number;
     razorpayOrderId : string | null;
     razorpayPaymentId : string | null;
     razorpaySignature : string | null;
@@ -21,6 +21,11 @@ interface verifyPayloadType {
     secretKey : string
 }
 
+interface SuccessPaymentType {
+    userId : mongoose.Types.ObjectId;
+    courseId : mongoose.Types.ObjectId;
+}
+
 export const createOrderDb = async(createOrderPayload : CreateOrderType) => {
     return await purchaseModel.create(createOrderPayload);
 }
@@ -29,8 +34,13 @@ export const verifyPaymentSignature = ({razorpay_order_id, razorpay_payment_id, 
      const generatedSignature = crypto.createHmac('sha256' ,secretKey)
      .update(razorpay_order_id + "|" + razorpay_payment_id)
      .digest('hex');
+     console.log(generatedSignature);
      if(generatedSignature === razorpay_signature) return true;
      else return false;
+}
+
+export  const updatePurchaseOrder = async({userId , courseId} : SuccessPaymentType) => {
+        return await purchaseModel.findOne({userId , courseId});
 }
 
 export const checkPurchasedCourse = async(userId: mongoose.Types.ObjectId , courseId:mongoose.Types.ObjectId) => {

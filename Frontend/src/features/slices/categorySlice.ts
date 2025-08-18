@@ -5,14 +5,14 @@ export interface categoryCourseState {
     categoryCourses : object[] | null;
     someMoreCourses : object[] | null;
     topSellingCourses : object[] | null;
-    isLoading : boolean;
+    // isLoading : boolean;
 }
 
 const initialState: categoryCourseState = {
     categoryCourses : null,
     someMoreCourses : null,
     topSellingCourses : null,
-    isLoading : false
+    // isLoading : false
 }
 
 export const categoryCourseSlice = createSlice({
@@ -26,11 +26,11 @@ export const categoryCourseSlice = createSlice({
         state.topSellingCourses = value.payload.topSellingCourses
     },
 
-    setIsLoading : (state , value) => {
-        state.isLoading = value.payload
-    },
+    // setIsLoading : (state , value) => {
+    //     state.isLoading = value.payload
+    // },
 
-    isLoading : state => {state.isLoading},
+    // isLoading : state => {state.isLoading},
 
     getCategoryCourses : state => {state.categoryCourses},
 
@@ -42,6 +42,6 @@ export const categoryCourseSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const {setCategoryCourses , getCategoryCourses , getSomeMoreCourses , getTopSellingCourses , setIsLoading , isLoading} = categoryCourseSlice.actions;
+export const {setCategoryCourses , getCategoryCourses , getSomeMoreCourses , getTopSellingCourses} = categoryCourseSlice.actions;
 
 export default categoryCourseSlice.reducer;

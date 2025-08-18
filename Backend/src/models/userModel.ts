@@ -38,8 +38,8 @@ const userSchema: Schema<UserSchemaType> = new Schema<UserSchemaType>({
     },
     contact_no : {
         type : Number,
-        required : true,
-        unique : true,
+        // required : true,
+        // unique : true,
         trim : true,
         minlength : [10 , 'contact no. must be at least 10 characters long']
     },

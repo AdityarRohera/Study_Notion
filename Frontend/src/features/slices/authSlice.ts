@@ -8,8 +8,10 @@ export interface authState {
     loading : boolean;
 }
 
+const getUser = localStorage.getItem('user');
+
 const initialState: authState = {
-    user :  null,
+    user :   getUser ? JSON.parse(getUser) : null ,
     token : localStorage.getItem('token') ? localStorage.getItem('token') : null,
     isAuthenticated : false,
     loading : false,

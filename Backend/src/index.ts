@@ -32,13 +32,15 @@ import courseRouter from './routes/courseRoute';
 import uploadRouter from './routes/fileUploadRoute';
 import contactRoute from './routes/contactUsRoute';
 import categoryRoute from './routes/categoryRoute';
+import paymentRoute from './routes/paymentRoute';
 app.use('/api/v1/user' , userRouter);
 app.use('/api/v1/course' , courseRouter);
 app.use('/api/v1/upload' , uploadRouter);
 app.use('/api/v1' , contactRoute);
 app.use('/api/v1' , categoryRoute);
+app.use('/api/v1/payment' , paymentRoute);
 
 
-app.listen(port, () => {
-  console.log(`App listening on port ${port}`)
+app.listen(port, async() => {
+  console.log(`App listening on port ${port}`);
 })

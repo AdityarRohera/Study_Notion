@@ -7,10 +7,11 @@ import Loading from "../commons/Loading";
 
 function CardContainer({name} : {name : string}) {
 
-     const {categoryCourses ,someMoreCourses , topSellingCourses , isLoading} = useSelector((state :RootState ) => state.category_courses)
+     const {categoryCourses ,someMoreCourses , topSellingCourses} = useSelector((state :RootState ) => state.category_courses)
+     const {loading} = useSelector((state:RootState) => state.auth);
      
 
-     if (isLoading) {
+     if (loading) {
        return <Loading/>;
      }
 
