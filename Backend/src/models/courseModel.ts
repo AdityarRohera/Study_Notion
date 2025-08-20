@@ -76,7 +76,8 @@ const courseSchema : Schema<CourseSchemaType> = new Schema<CourseSchemaType>({
     },
     status : {
         type : String,
-        enum : ['Draft' , 'Published']
+        enum : ['Draft' , 'Published'],
+        default: 'Draft'
     }
 
 })

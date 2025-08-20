@@ -84,3 +84,17 @@ export const findSingleCourseByID = async(courseId : mongoose.Types.ObjectId) =>
     })
     . exec()
 }
+
+export const getDraftCourse = async() => {
+    return await courseModel.findOne({status : 'Draft'})
+    // .populate({
+    //     path : 'instructor' , populate : {path: 'additional_info'}
+    // })
+    .populate({
+        path : 'courseContent' , populate : {path : 'subSection'}
+    })
+    .populate({
+        path : 'category' , select : 'name'
+    })
+    . exec()
+}

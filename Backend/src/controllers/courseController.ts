@@ -1,6 +1,6 @@
 import { Request , Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth";
-import { createCourse , findCategory , createSection ,createSubSection , updateSubSection, findSingleCourseByID } from "../utils/courseServises";
+import { createCourse , findCategory , createSection ,createSubSection , updateSubSection, findSingleCourseByID , getDraftCourse } from "../utils/courseServises";
 import courseModel from "../models/courseModel";
 import mongoose from "mongoose";
 import courseSectionModel from "../models/courseSectionModel";
@@ -208,6 +208,40 @@ export const getSingleCourseHandler = async(req : Request , res : Response) => {
             success : true,
             message : "course fetched",
             course : getCourse
+        })
+            
+    } catch(err : unknown){
+        let errorMessage;
+            if(err instanceof Error){
+                errorMessage = err.message
+            } else if(typeof(err) === 'string'){
+                errorMessage = err
+            }
+            res.status(500).send({
+                success : false,
+                message : "Error comes in course get single detailed course",
+                error : errorMessage
+            })
+    }
+}
+
+export const getDraftCourseHandler = async(req : Request , res : Response) => {
+    try{
+
+        // search for draft course
+        const getFullDraftCourse = await getDraftCourse();
+        // if(!getFullDraftCourse){
+        //     res.status(400).send({
+        //         success : false,
+        //         message : "No Draft course available"
+        //     })
+        //     return;
+        // }
+
+        res.status(200).send({
+            success : true,
+            message : "Course fetched",
+            course : getFullDraftCourse
         })
             
     } catch(err : unknown){
