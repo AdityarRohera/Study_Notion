@@ -2,12 +2,14 @@ import { configureStore } from '@reduxjs/toolkit'
 import authReducer from '../features/slices/authSlice'
 import  categoryCourseReducer from '../features/slices/categorySlice'
 import  fullCourseReducer  from '../features/slices/courseSlice'
+import loadingReducer from '../features/slices/loadingSlice'
 
 export const store = configureStore({
   reducer: {
     auth : authReducer,
     category_courses : categoryCourseReducer,
-    full_course : fullCourseReducer
+    full_course : fullCourseReducer,
+    loading : loadingReducer,
   },
 })
 

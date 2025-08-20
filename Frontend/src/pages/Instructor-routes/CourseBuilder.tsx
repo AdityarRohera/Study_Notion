@@ -12,10 +12,10 @@ function CourseBuilder() {
 
          </div>
         
-         <NewCourseTemplete varient="second"/>
+         <NewCourseTemplete varient="courseBuider"/>
 
     </div>
   )
 }
 
-export default CourseBuilder
+export default CourseBuilder;

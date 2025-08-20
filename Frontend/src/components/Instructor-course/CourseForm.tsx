@@ -6,19 +6,46 @@ import { useSelector} from "react-redux";
 import { type RootState } from "../../Services/strore";
 import { createCourseForm } from "../../Services/operations/instructorUtilis";
 import { useNavigate } from "react-router-dom";
+import { getSingleCourse } from "../../Services/operations/instructorUtilis";
+import { useDispatch } from "react-redux";
+
 
 // components/CourseForm.tsx
-export default function CourseForm() {
+export default function CourseForm({state} : {state : string}) {
 
   const {_id} = useSelector((state : RootState) => state.auth.user);
+  const {AboutCourse} = useSelector((state : RootState) => state.full_course);
+  const dispatch = useDispatch();
 
   const[createCourseData , setCreateCourseData] = useState<any>({courseName : '' , courseDesc : '' , user :`${_id}` , whatYouWillLearn : '' , price:'' , thumbnail:'' , category:''});
+
+  console.log(createCourseData)
+
+  // fill form data if exist in database
+  const preFillState = async() => {
+
+       if(state == 'new-course') return;
+
+       else if(state == 'draft-course'){
+           // first get from react-state if exist 
+           AboutCourse && (setCreateCourseData(AboutCourse));
+             
+           if(!AboutCourse){
+             const fullCourse = await getSingleCourse(dispatch);
+             fullCourse && (setCreateCourseData(fullCourse.AboutCourse));
+           }
+       }
+  }
+
+    useEffect(() => {
+        preFillState();
+    } , []);
 
   const Navigate = useNavigate();
   const[file , setFile] = useState<string | null>(null);
   const[category , setCategory] = useState<any>([]);
   const categoryRef = useRef<string | null>('');
-  console.log(createCourseData)
+  // console.log(createCourseData)
 
   const fileChangeHandler = (e: any) => {
       setFile(e.target.files);

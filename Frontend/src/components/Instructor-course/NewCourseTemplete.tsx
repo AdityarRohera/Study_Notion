@@ -5,22 +5,22 @@ import CourseTips from "./CourseTips"
 import { useNavigate } from "react-router-dom"
 
 
-function NewCourseTemplete({varient} : {varient : string}) {
+function NewCourseTemplete({varient , state} : {varient : string , state?:string}) {
 
     const navigate = useNavigate()
 
     const nextHandler = () => {
-    if (varient === "first") {
+    if (varient === "courseInfo") {
       navigate("/dashboard/mycourse/course-builder");
-    } else if (varient === "second") {
+    } else if (varient === "courseBuilder") {
       navigate("/dashboard/mycourse/additional-data");
     }
   };
 
   const prevHandler = () => {
-    if (varient === "second") {
+    if (varient === "courseBuilder") {
       navigate("/dashboard/mycourse/course-info");
-    } else if (varient === "third") {
+    } else if (varient === "publish") {
       navigate("/dashboard/mycourse/course-builder");
     }
   };
@@ -35,19 +35,19 @@ function NewCourseTemplete({varient} : {varient : string}) {
               <StepTracker />
 
               {
-                varient === 'first' && <CourseForm/>  
+                varient === 'courseInfo' && <CourseForm state={state!}/>  
               }
               {
-                varient === 'second' && <CourseBuilderComponent/>  
+                varient === 'courseBuilder' && <CourseBuilderComponent/>  
               }
               {
-                varient === 'third' && <div/>  
+                varient === 'publish' && <div/>  
               }
 
               <div className="flex gap-5 justify-center mt-4">
 
                 {
-                    varient !== 'first' &&
+                    varient !== 'courseInfo' &&
                     <div className="flex mt-4">
                     <button onClick={prevHandler} className="bg-yellow-400 text-black font-semibold px-6 py-2 rounded-lg hover:bg-yellow-300 transition">
                        ◀ Prev
@@ -56,7 +56,7 @@ function NewCourseTemplete({varient} : {varient : string}) {
                 }
 
                 {
-                    varient !== 'third' &&
+                    varient !== 'publish' &&
                     <div className="flex mt-4">
                     <button onClick={nextHandler} className="bg-yellow-400 text-black font-semibold px-6 py-2 rounded-lg hover:bg-yellow-300 transition">
                       Next ➤
