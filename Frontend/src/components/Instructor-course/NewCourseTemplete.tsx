@@ -3,6 +3,7 @@ import CourseForm from "./CourseForm"
 import CourseBuilderComponent from "./CourseBuilderComponent"
 import CourseTips from "./CourseTips"
 import { useNavigate } from "react-router-dom"
+import PublishSetting from "./PublishSetting"
 
 
 function NewCourseTemplete({varient , state} : {varient : string , state?:string}) {
@@ -11,17 +12,17 @@ function NewCourseTemplete({varient , state} : {varient : string , state?:string
 
     const nextHandler = () => {
     if (varient === "courseInfo") {
-      navigate("/dashboard/mycourse/course-builder");
+      navigate(`/dashboard/mycourse/course-builder/${state}`);
     } else if (varient === "courseBuilder") {
-      navigate("/dashboard/mycourse/additional-data");
+      navigate(`/dashboard/mycourse/publish-course/${state}`);
     }
   };
 
   const prevHandler = () => {
     if (varient === "courseBuilder") {
-      navigate("/dashboard/mycourse/course-info");
+      navigate(`/dashboard/mycourse/course-info/${state}`);
     } else if (varient === "publish") {
-      navigate("/dashboard/mycourse/course-builder");
+      navigate(`/dashboard/mycourse/course-builder/${state}`);
     }
   };
 
@@ -41,15 +42,15 @@ function NewCourseTemplete({varient , state} : {varient : string , state?:string
                 varient === 'courseBuilder' && <CourseBuilderComponent/>  
               }
               {
-                varient === 'publish' && <div/>  
+                varient === 'publish' && <PublishSetting/>
               }
 
-              <div className="flex gap-5 justify-center mt-4">
+              <div className={` flex gap-5 ${varient == 'publish' ? 'justify-start gap-[300px]' : 'justify-center gap-5'} mt-4 items-end`}>
 
                 {
                     varient !== 'courseInfo' &&
                     <div className="flex mt-4">
-                    <button onClick={prevHandler} className="bg-yellow-400 text-black font-semibold px-6 py-2 rounded-lg hover:bg-yellow-300 transition">
+                    <button onClick={prevHandler} className="  bg-yellow-400 text-black font-semibold px-6 py-2 rounded-lg hover:bg-yellow-300 transition">
                        ◀ Prev
                     </button>
                     </div>
@@ -63,6 +64,24 @@ function NewCourseTemplete({varient , state} : {varient : string , state?:string
                     </button>
                     </div>
                 }
+
+                {/* {
+                  varient == 'publish' && 
+
+                  <div className="flex justify-end gap-4">
+                    <div>
+                    <button className="bg-yellow-400 text-black font-semibold px-6 py-2 rounded-lg hover:bg-yellow-300 transition">
+                      Save as Draft
+                    </button>
+                  </div>
+                  
+                  <div>
+                    <button onClick={} className="bg-yellow-400 text-black font-semibold px-6 py-2 rounded-lg hover:bg-yellow-300 transition">
+                      Save and Publish
+                    </button>
+                  </div>
+                  </div>
+                } */}
 
               </div>
               

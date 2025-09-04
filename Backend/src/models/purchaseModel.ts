@@ -8,8 +8,9 @@ interface purchaseSchemaType {
     razorpayOrderId : string | null;
     razorpayPaymentId : string | null;
     razorpaySignature : string | null;
+    failureReason : string | null;
     notes : object;
-    status : 'Created' | 'Paid' | 'Failed';
+    status : 'Created' | 'Paid' | 'Attempted' | 'Failed';
     createdAt : Date;
     updatedAt : Date;
 }
@@ -21,7 +22,7 @@ const purchaseSchema : Schema<purchaseSchemaType> = new Schema<purchaseSchemaTyp
     },
     courseId : {
         type : ObjectId,
-        ref : 'Course',
+        ref : 'course',
         required : true
     },
     amount : {
@@ -37,6 +38,10 @@ const purchaseSchema : Schema<purchaseSchemaType> = new Schema<purchaseSchemaTyp
          trim : true
     },
      razorpaySignature : {
+        type : String,
+        trim : true
+     },
+     failureReason : {
         type : String,
         trim : true
      },
@@ -57,5 +62,5 @@ const purchaseSchema : Schema<purchaseSchemaType> = new Schema<purchaseSchemaTyp
      }
 });
 
-const purchaseModel : mongoose.Model<purchaseSchemaType> = mongoose.model('Purchase' , purchaseSchema);
+const purchaseModel : mongoose.Model<purchaseSchemaType> = mongoose.model('purchases' , purchaseSchema);
 export default purchaseModel;

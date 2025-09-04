@@ -33,12 +33,14 @@ import uploadRouter from './routes/fileUploadRoute';
 import contactRoute from './routes/contactUsRoute';
 import categoryRoute from './routes/categoryRoute';
 import paymentRoute from './routes/paymentRoute';
+import purchaseRoute from './routes/purchaseRoute';
 app.use('/api/v1/user' , userRouter);
 app.use('/api/v1/course' , courseRouter);
 app.use('/api/v1/upload' , uploadRouter);
 app.use('/api/v1' , contactRoute);
 app.use('/api/v1' , categoryRoute);
 app.use('/api/v1/payment' , paymentRoute);
+app.use('/api/v1/purchase' , purchaseRoute);
 
 
 app.listen(port, async() => {

@@ -9,10 +9,12 @@ interface CourseSchemaType {
     courseContent : mongoose.Types.ObjectId[];
     totalSum : number;
     TotalNumberRated : number;
+    TotalEnrolledStudent : number;
     price : number;
-    thumbnail : string;
+    thumbnail : string | null;
     category : ObjectId;
     numberOfStudentEnrolled : number;
+    totalLength : number;
     status : string;
 }
 
@@ -56,15 +58,20 @@ const courseSchema : Schema<CourseSchemaType> = new Schema<CourseSchemaType>({
          trim : true,
          default : 0
     },
+    TotalEnrolledStudent : {
+        type : Number,
+        trim : true,
+        default : 0
+    },
     price : {
         type : Number,
         required : true,
         trim : true
     },
-    thumbnail : {
-         type : String,
-         required : true,
-         trim : true
+    thumbnail: {
+        type: String,
+        default: null,   // ✅ safe default
+        trim: true,
     },
     category :{
             type : ObjectId,
@@ -73,6 +80,10 @@ const courseSchema : Schema<CourseSchemaType> = new Schema<CourseSchemaType>({
     numberOfStudentEnrolled : {
          type : Number,
          trim : true
+    },
+    totalLength : {
+        type : Number,
+        default : 0
     },
     status : {
         type : String,

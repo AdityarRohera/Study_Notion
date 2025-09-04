@@ -10,14 +10,14 @@ export default function CoursePopup({close} : any) {
 
   const handleContinue = () => {
     console.log("✅ Continue Draft clicked");
-    navigate('/dashboard/mycourse/course-info' , {state : 'draft-course'});
+    navigate(`/dashboard/mycourse/course-info/draft-course`);
   };
 
   const handleStartNew = async() => {
     console.log("🆕 Start New clicked");
         // first call delete api and then navigate to new page
         await deleteDraftCourse(dispatch);
-        navigate('/dashboard/mycourse/course-info' , {state : 'new-course'});
+        navigate('/dashboard/mycourse/course-info/new-course');
   };
 
 return (

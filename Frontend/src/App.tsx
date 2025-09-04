@@ -24,11 +24,16 @@ import Dashboard from "./pages/Instructor-routes/Dashboard";
 import MyCourse from "./pages/Instructor-routes/MyCourse";
 import CourseInfo from "./pages/Instructor-routes/CourseInfo";
 import CourseBuilder from "./pages/Instructor-routes/CourseBuilder";
-import AdditionalData from "./pages/Instructor-routes/AdditionalData";
+// import AdditionalData from "./pages/Instructor-routes/AdditionalData";
 import UpdatePassword from "./pages/UpdatePassword";
 import CheckEmail from "./pages/CheckEmail";
 import ResetCompleted from "./pages/ResetCompleted";
+import PublishCourse from "./pages/Instructor-routes/PublishCourse";
 
+// student enrolled course import 
+import EnrolledCourseSections from "./pages/Student-routes/EnrolledCourseSections";
+import EnrolledCourseSubSection from "./pages/Student-routes/EnrolledCourseSubSection";
+import VideoPlayerPage from "./pages/Student-routes/VideoPlayerPage";
 
 
 function App() {
@@ -63,11 +68,16 @@ function App() {
          {/* Instructor route */}
          <Route path="/dashboard" element={<Dashboard />} />
          <Route path="/dashboard/mycourse" element={<MyCourse />} />
-         <Route path="/dashboard/mycourse/course-info" element={<CourseInfo />} />
-         <Route path="/dashboard/mycourse/course-builder" element={<CourseBuilder />} />
-         <Route path="/dashboard/mycourse/additional-data" element={<AdditionalData />} />
+         <Route path="/dashboard/mycourse/course-info/:state" element={<CourseInfo />} />
+         <Route path="/dashboard/mycourse/course-builder/:state" element={<CourseBuilder />} />
+         <Route path="/dashboard/mycourse/publish-course/:state" element={<PublishCourse />} />
 
          <Route path="/verify-otp" element={<VerifyOTP/>}/>
+
+         {/* Student Dashborad */}
+         <Route path="/dashboard/enrolled-courses/:courseId" element={<EnrolledCourseSections/>} />
+         <Route path="/dashboard/lectures/:sectionId" element={<EnrolledCourseSubSection/>} />
+         <Route path="/watch/:videoUrl" element={<VideoPlayerPage />} />
     </Routes>
     </div>
   )

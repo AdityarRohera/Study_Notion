@@ -54,6 +54,7 @@ function NavBar() {
 
     const getCategories = async() => {
         const category = await fatchCategories();
+        // console.log(category)
         if(categories){
           setCategories(category);
         }
@@ -103,8 +104,8 @@ function NavBar() {
               {
                 
                  categories?.map((category : any , index : any) => {
-                     const {_id ,name} = category;
-                      return  <Link className="w-full h-15 items-center p-2 py-[15px] hover:bg-gray-300 rounded-xl" to={`/catalog/${name}`} state={_id} key={index} >{name}</Link>      
+                     const {_id ,name , desc} = category;
+                      return  <Link className="w-full h-15 items-center p-2 py-[15px] hover:bg-gray-300 rounded-xl"  to={`/catalog/${name}?desc=${encodeURIComponent(desc)}`} state={_id} key={index} >{name}</Link>      
                  })
               }
     
@@ -134,14 +135,14 @@ function NavBar() {
                       <div className="">
                         
                       <div ref={profileRef} onClick={openProfileHandler} className="cursor-pointer relative rounded-full ">
-                      <img id="profile" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmBs0YZevOEuYRwxd-bG_ttYxcHKeXIRpIhB-1e6yrZ-znl-hISmDqwak&s" className="border rounded-full w-[40px] flex justify-center items-center" alt="" />
+                        <img id="profile" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmBs0YZevOEuYRwxd-bG_ttYxcHKeXIRpIhB-1e6yrZ-znl-hISmDqwak&s" className="border rounded-full w-[40px] flex justify-center items-center" alt="" />
                       </div>
 
-                    <div className={`absolute top-[85%] right-[200px] bg-gray-500 text-white w-[120px] flex flex-col items-center justify-center h-[80px] rounded-xl p-1 ${!visible ? 'opacity-0' : ''}`}>
-                        <Link to={'/dashboard/my-profile'}>Dashboard</Link>
-                        <hr />
-                        <button className="cursor-pointer" onClick={() => logout(navigate)}>Logout</button>
-                    </div>
+                      <div className={`absolute top-[85%] right-[200px] bg-gray-500 text-white w-[120px] flex flex-col items-center justify-center h-[80px] rounded-xl p-1 z-10 ${!visible ? 'opacity-0' : ''}`}>
+                          <Link to={'/dashboard/my-profile'}>Dashboard</Link>
+                          <hr />
+                          <button className="cursor-pointer" onClick={() => logout(navigate)}>Logout</button>
+                      </div>
                     </div>
                     }
 

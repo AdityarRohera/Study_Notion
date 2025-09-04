@@ -1,16 +1,15 @@
 // import React from 'react'
 
+// import Catalog from "../../pages/Catalog";
 import BuyCourseCard from "./BuyCourseCard"
-import { useSelector } from "react-redux";
-import type{ RootState } from "../../Services/strore";
+// import { useSelector } from "react-redux";
+// import type{ RootState } from "../../Services/strore";
 import { useEffect } from "react";
 
-function AboutFullCourse() {
-
-  const {AboutCourse} = useSelector((state : RootState) => state.full_course);
-  console.log(AboutCourse)
+function AboutFullCourse({AboutCourse} : any) {
 
   const {courseName , courseDesc , totalSum , TotalNumberRated , category , instructor , _id , price} : any = AboutCourse
+  console.log(instructor , category)
 
       const calAvgRating = () => {
           const rating = totalSum / TotalNumberRated;

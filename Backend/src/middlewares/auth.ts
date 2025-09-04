@@ -5,7 +5,7 @@ import jwt , {JwtPayload } from 'jsonwebtoken';
 
 export interface AuthenticatedRequest extends Request {
         user : JwtPayload;
-  }
+}
 
 export const userAuth = (req : Request , res : Response , next : Function) => {
         try{

@@ -94,8 +94,8 @@ function BuyCourseCard({id , amount ,courseName} : any) {
           },
         };
 
-    const razorpayInstance = new Razorpay(options);
-    razorpayInstance.open();
+        const razorpayInstance = new Razorpay(options);
+        razorpayInstance.open();
       }
 
     }catch(err){

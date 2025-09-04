@@ -16,6 +16,7 @@ function IconHeading({ path , icon, text} : IconHeadingType) {
     // console.log(isActiveHeading);
     const location = useLocation();
     const navigate = useNavigate();
+    const isActive = location.pathname === path || location.pathname.includes(path);
 
     if(path === '/login'){
         logout(navigate);
@@ -24,7 +25,7 @@ function IconHeading({ path , icon, text} : IconHeadingType) {
   return (
     <Link
       to={`${path}`}
-      className={`${commonProperty} ${path == location.pathname ? "text-yellow-200" : "text-white"} ${text === "Logout" ? 'opacity-50' : 'opacity-90'}`}
+      className={`${commonProperty} ${isActive ? "text-yellow-200" : "text-white"} ${text === "Logout" ? 'opacity-50' : 'opacity-90'}`}
     >
       {icon}
       <p>{text}</p>

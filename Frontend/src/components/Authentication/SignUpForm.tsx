@@ -12,12 +12,12 @@ import { setUser } from "../../features/slices/authSlice";
 import { signupValidation } from "../../Services/inputValidation";
 import toast, { Toaster } from "react-hot-toast";
 
-function SignUpForm() {
+function SignUpForm(role : any) {
     const[showPassword ,setShowPassword] = useState({createPassword : false , confirmPassword : false});
         const dispatch = useDispatch()
         const Navigate = useNavigate();
 
-    const [signUpData , setSignUpData] = useState({account_type : 'Student' , firstName : '' , lastName : '' , email : '' , createPassword : '' , confirmPassword : '' , otp : ''});
+    const [signUpData , setSignUpData] = useState({account_type : `${role}` , firstName : '' , lastName : '' , email : '' , createPassword : '' , confirmPassword : '' , otp : ''});
 
     const iconChangeHandler = (e : any) => {
       const {name} = e.currentTarget;
@@ -68,91 +68,122 @@ function SignUpForm() {
     // console.log(signUpData);
 
   return (
-    <div className="">
+   <div className="w-full">
+  <form onSubmit={submitHandler} className="flex flex-col gap-6">
 
-      <form onSubmit={submitHandler} className="flex flex-col gap-5" action="">
-        {/* Account type */}
-      <div className="flex gap-5 justify-center items-center border rounded-4xl w-[200px] h-[50px]">
-        <button type="button" onClick={changeHandler} name="account_type" value={'Student'} >Student</button>
-        <button type="button" onClick={changeHandler} name="account_type" value={'Instructor'}>Instructor</button>
+    {/* Account type (optional toggle buttons) */}
+    {/* <div className="flex gap-5 justify-center items-center border rounded-4xl w-[200px] h-[50px]">
+      <button type="button" onClick={changeHandler} name="account_type" value="Student">Student</button>
+      <button type="button" onClick={changeHandler} name="account_type" value="Instructor">Instructor</button>
+    </div> */}
+
+    {/* First + Last Name */}
+    <div className="grid grid-cols-2 gap-6">
+      <div>
+        <label htmlFor="signup-firstName" className="block text-sm mb-1">First Name <span className="text-red-500">*</span></label>
+        <InputField
+          type="text"
+          placeholder="Enter first name"
+          id="signup-firstName"
+          name="firstName"
+          value={signUpData.firstName}
+          size="md"
+          changeHandler={changeHandler}
+        />
       </div>
-
-    {/* First name input */}
-      <label htmlFor="signup-firstName">First Name *</label>
-      <InputField
-       type='text'
-       placeholder='Enter first name'
-       id='signup-firstName'
-       name="firstName"
-       value={signUpData.firstName ? signUpData.firstName : ''}
-       size="md"
-       changeHandler={changeHandler}
-       />
-
-    {/* Last name input */}
-    <label htmlFor="signup-lastName">Last Name *</label>
-      <InputField
-       type='text'
-       placeholder='Enter last name'
-       id='signup-lastName'
-       name="lastName"
-       value={signUpData.lastName ? signUpData.lastName : ''}
-       size="md"
-       changeHandler={changeHandler}
-       />
-
-    {/* email input */}
-      <label htmlFor="login-email">Email Address</label>
-      <InputField
-       type='text'
-       placeholder='Enter email address'
-       id='login-email'
-       name="email"
-       value={signUpData.email ? signUpData.email : ''}
-       size="lg"
-       changeHandler={changeHandler}
-       />
-
-    {/* create password Input */}
-      <label htmlFor="SignUp-CreatePassword">Password</label>
-      <InputField
-       type={`${showPassword.createPassword ? 'text' : 'password'}`}
-       placeholder="Enter Password"
-       id='SignUp-CreatePassword'
-       name="createPassword"
-       value={signUpData.createPassword ? signUpData.createPassword : ''}
-       size="md"
-       iconChangeHandler={iconChangeHandler}
-       changeHandler={changeHandler}
-       passwordType={showPassword.createPassword ? "text" : "password"} 
-       />
-
-    {/* confirm password Input */}
-      <label htmlFor="SignUp-ConfirmPassword">Password</label>
-      <InputField
-       type={`${showPassword.confirmPassword ? 'text' : 'password'}`}
-       placeholder="Confirm Password"
-       id='SignUp-ConfirmPassword'
-       name="confirmPassword"
-       value={signUpData.confirmPassword ? signUpData.confirmPassword : ''}
-       size="md"
-       iconChangeHandler={iconChangeHandler}
-       changeHandler={changeHandler}
-       passwordType={showPassword.confirmPassword ? "text" : "password"} 
-       />
-       
-      <button
-          type="submit"
-          className="w-[200px] border"
-        >
-          Create Account
-      </button>
-
-       <Toaster />
-
-      </form>
-
+      <div>
+        <label htmlFor="signup-lastName" className="block text-sm mb-1">Last Name <span className="text-red-500">*</span></label>
+        <InputField
+          type="text"
+          placeholder="Enter last name"
+          id="signup-lastName"
+          name="lastName"
+          value={signUpData.lastName}
+          size="md"
+          changeHandler={changeHandler}
+        />
+      </div>
     </div>
+
+    {/* Email */}
+    <div>
+      <label htmlFor="signup-email" className="block text-sm mb-1">Email Address <span className="text-red-500">*</span></label>
+      <InputField
+        type="text"
+        placeholder="Enter email address"
+        id="signup-email"
+        name="email"
+        value={signUpData.email}
+        size="lg"
+        changeHandler={changeHandler}
+      />
+    </div>
+
+    {/* Phone Number */}
+    {/* <div>
+      <label htmlFor="signup-phone" className="block text-sm mb-1">Phone Number <span className="text-red-500">*</span></label>
+      <div className="flex gap-2">
+        <select className="bg-gray-800 text-gray-300 rounded-md px-2">
+          <option value="+91">+91</option>
+          <option value="+1">+1</option>
+          <option value="+44">+44</option>
+        </select>
+        <InputField
+          type="text"
+          placeholder="12345 67890"
+          id="signup-phone"
+          name="phone"
+          value={signUpData.phone}
+          size="lg"
+          changeHandler={changeHandler}
+        />
+      </div>
+    </div> */}
+
+    {/* Password + Confirm Password */}
+    <div className="grid grid-cols-2 gap-6">
+      <div>
+        <label htmlFor="signup-password" className="block text-sm mb-1">Create Password <span className="text-red-500">*</span></label>
+         <InputField
+            type={`${showPassword.createPassword ? 'text' : 'password'}`}
+            placeholder="Enter Password"
+            id='SignUp-CreatePassword'
+            name="createPassword"
+            value={signUpData.createPassword ? signUpData.createPassword : ''}
+            size="md"
+            iconChangeHandler={iconChangeHandler}
+            changeHandler={changeHandler}
+            passwordType={showPassword.createPassword ? "text" : "password"} 
+        />
+      </div>
+      <div>
+        <label htmlFor="signup-confirmPassword" className="block text-sm mb-1">Confirm Password <span className="text-red-500">*</span></label>
+        <InputField
+        type={`${showPassword.confirmPassword ? 'text' : 'password'}`}
+        placeholder="Confirm Password"
+        id='SignUp-ConfirmPassword'
+        name="confirmPassword"
+        value={signUpData.confirmPassword ? signUpData.confirmPassword : ''}
+        size="md"
+        iconChangeHandler={iconChangeHandler}
+        changeHandler={changeHandler}
+        passwordType={showPassword.confirmPassword ? "text" : "password"} 
+       />
+      </div>
+    </div>
+
+    {/* Submit Button */}
+    <button
+      type="submit"
+      className="w-full bg-yellow-400 text-black font-semibold rounded-md py-3 mt-4 hover:bg-yellow-500 transition"
+    >
+      Create Account
+    </button>
+
+    <Toaster />
+  </form>
+</div>
+
   )
 }
 

@@ -44,6 +44,10 @@ export const createSection = async(sectionName : string) => {
 //         {new : true}).exec();
 // }
 
+export const findSectionById = async(sectionId : mongoose.Types.ObjectId) => {
+    return await courseSectionModel.findById(sectionId);
+}
+
 export const createSubSection = async(subSectionPayload : CreateSubSectionType) => {
     return await courseSubSectionModel.create(subSectionPayload);
 }
@@ -87,14 +91,26 @@ export const findSingleCourseByID = async(courseId : mongoose.Types.ObjectId) =>
 
 export const getDraftCourse = async() => {
     return await courseModel.findOne({status : 'Draft'})
-    // .populate({
-    //     path : 'instructor' , populate : {path: 'additional_info'}
-    // })
     .populate({
         path : 'courseContent' , populate : {path : 'subSection'}
     })
-    .populate({
-        path : 'category' , select : 'name'
-    })
     . exec()
+}
+
+// Find and update single corse data
+
+export const updateSingleCourse = async(courseId : mongoose.Types.ObjectId , createCoursePayload:CreateCourseType) => {
+    const {courseName , courseDesc, whatYouWillLearn , price , category , thumbnail} = createCoursePayload;
+    return await courseModel.findByIdAndUpdate(
+        courseId,
+        {
+            courseName,
+            courseDesc,
+            whatYouWillLearn,
+            price,
+            category,
+            thumbnail
+        },
+        { new: true, runValidators: true },
+    )
 }

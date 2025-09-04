@@ -15,9 +15,9 @@ function CardContainer({name} : {name : string}) {
        return <Loading/>;
      }
 
-     if (!categoryCourses || categoryCourses.length === 0) {
-        return <div className="text-white">No Courses Found</div>;
-     }
+    //  if (!categoryCourses || categoryCourses.length === 0) {
+    //     return <div className="text-white">No Courses Found</div>;
+    //  }
 
   return (
     <div className="flex items-center gap-10 overflow-x-scroll overflow-y-hidden scrollbar-hidden overflow-scroll min-h-[400px] pl-2">
@@ -32,6 +32,8 @@ function CardContainer({name} : {name : string}) {
       {
         // now map courses cards
         name === "CategoryCourses" && 
+        
+        categoryCourses && categoryCourses.length !==0 && 
         categoryCourses?.map((category , index) => {
             return <CourseCard key={index} data={category}/>
         })

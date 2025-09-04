@@ -4,7 +4,7 @@ const {ObjectId} = Schema.Types
 interface CourseSectionType {
     sectionName : string;
     totalLecture : number;
-    subSection : ObjectId[];
+    subSection : mongoose.Types.ObjectId[];
 }
 
 const courseSectionSchema : Schema<CourseSectionType> = new Schema<CourseSectionType>({

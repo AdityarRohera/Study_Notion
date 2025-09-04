@@ -1,13 +1,17 @@
 // import React from 'react'
 // import Heading from "../commons/Heading"
-import AutoCodebarLayout from "./AutoCodebarLayout"
+// import AutoCodebarLayout from "./AutoCodebarLayout"
+// import AutoCode from "./AutoCode"
+import Info from "./Info"
+import Code from "./Code"
 
 function AboutCourses() {
 
-    const clickHandler = () => {console.log("clicked")}
+    // const clickHandler = () => {console.log("clicked")}
   return (
-    <div>
-        <AutoCodebarLayout text="Unlock your coding potential with our online courses." para={"Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt, consequuntur totam cum molestias rem aliquam rerum eveniet iusto dicta, architecto amet? Possimus mollitia quis quam! Ipsum enim ad excepturi cum?"} btnText="click" clickHandler={clickHandler}/>
+    <div className="flex gap-5 rounded-xl bg-[#0d1117] text-white w-[85%] mx-auto p-6">
+      <Info />
+      <Code />
     </div>
   )
 }

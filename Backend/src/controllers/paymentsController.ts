@@ -72,6 +72,7 @@ export const createPurchaseOder = async(req : Request , res : Response) => {
         }
 
         const createOrder = await instance.orders.create(options);
+        console.log("Getting response from order api -> " , createOrder);
 
         // below code in update and create purchase model included notes is pending...
         // now update purchase order if status is created
@@ -97,6 +98,7 @@ export const createPurchaseOder = async(req : Request , res : Response) => {
         const createOrderPayload = {userId , courseId , amount , razorpayOrderId:createOrder.id , razorpayPaymentId:null , razorpaySignature:null , status:'Created' as 'Created', updatedAt: new Date(Date.now())};
 
         const createPurchaseOdr = await createOrderDb(createOrderPayload);
+        console.log(createPurchaseOdr);
         
            res.status(200).json({
                success : true,
@@ -225,50 +227,94 @@ export const verifyPayments = async(req : Request , res : Response) => {
                     return;
                 }
 
-                    res.status(200).send({
-                    status : 'success',
-                    message : 'course purchased successfully on StudyNotion'
-                    }) 
+                // Signature verified
+                    const data = req.body;
+                    console.log("Getting response data" , data);
+                    console.log("Webhook Event:", data.event);
 
-                  // if signature verified
-                   const data = req.body;
-                   console.log(JSON.stringify(data));
+                    const paymentEntity = data.payload.payment.entity
+                    console.log('payment entity=>>>>>>', paymentEntity);
+                    const { id, order_id, notes, status, error_description, email, description } = paymentEntity;
+                    
+                    const { userId, courseId } = notes;
 
-                   const paymentId = data.payload.payment.entity.id;
-                   const orderId = data.payload.payment.entity.order_id;
-                   const {email} = data.payload.payment.entity
+                    console.log("💳 Payment ID:", id);
+                    console.log("🧾 Order ID:", order_id); 
+                    console.log("Additional details -> " , status , " " , "Error -> " ,error_description , "mail " , email ,"desc-> " , description);
+                    
 
-                   console.log("💳 Payment ID:", paymentId);
-                   console.log("🧾 Order ID:", orderId); 
-                 
+                    // Payment success now allow user for course...
 
-        // Payment success now allow user for course
-        // process of updation...
-        // first update purchase model feilds -> (userId ,courseId , paymentId , signature , status , updated_at);
-        const {userId , courseId} = data.payload.payment.entity.notes
-        const updatedOrderStatus = await updatePurchaseOrder({userId , courseId});
-        if(updatedOrderStatus){
-            updatedOrderStatus.updatedAt = new Date(Date.now());
-            updatedOrderStatus.razorpayPaymentId = paymentId;
-            updatedOrderStatus.razorpaySignature = razorpay_signature;
-            updatedOrderStatus.status = 'Paid' as 'Paid';
-            await updatedOrderStatus.save();
-        }
+                    // first update purchase model feilds -> (userId ,courseId , paymentId , signature , status , updated_at);
+                    const updatedOrderStatus = await updatePurchaseOrder({userId , courseId});
+                    if(updatedOrderStatus){
+                        updatedOrderStatus.updatedAt = new Date(Date.now());
+                        updatedOrderStatus.razorpayPaymentId = id;
+                        updatedOrderStatus.razorpaySignature = razorpay_signature;
+                    }
 
-        // // second update course model feild -> (no. of student's enrolled count);
-        // const getCourse = await findCourseByID(courseId);
-        // if(getCourse){
-        //     getCourse.numberOfStudentEnrolled++;
-        //     await getCourse.save();
-        // } // do later currently number on course not included
-        // send mail to user for course purcahse
-        const {description} = data.payload.payment.entity
-        const mailBody = {
-            email,
-            title : `Successfully Purchased course on StudyNotion`,
-            body : `Thanks for purchasing course ${description} from studyNotion`
-        }
-         await mailSender(mailBody);
+
+                    console.log("data.event =>>>>>>>>>>>>>", data.event, "  type  =>>>", typeof data.event)
+
+                    // if payment captured
+                    if (data.event === 'order.paid'){
+
+                        console.log("inside payment condition ####################")
+
+                         // Success
+                         if (updatedOrderStatus) {
+
+                             updatedOrderStatus.status = 'Paid' as 'Paid';
+                             await updatedOrderStatus.save();
+
+
+                             // second update course model feild -> (no. of student's enrolled count);
+                              const getCourse = await courseModel.findByIdAndUpdate(courseId , {$inc : {TotalEnrolledStudent : 1}});
+                              if(!getCourse){
+                                   res.status(400).send({
+                                       success : false,
+                                       message : "Invalid courseId"
+                                   })
+                                   return;
+                              }
+
+                              // Now Send email
+                                 try{
+                                    await mailSender({
+                                                    email,
+                                                    title: "Successfully Purchased course on StudyNotion",
+                                                    body: `Thanks for purchasing course ${description} from StudyNotion`,
+                                                });
+                                 } catch(err){
+                                        console.log("Email failed:", err);
+                                 }
+                                 finally{
+                                     res.status(200).send({
+                                        status: "success",
+                                        message: "Payment captured successfully",
+                                    }); 
+                                    return;
+                                 }
+                        }
+                    }
+                    
+                    // if payment failed
+                    else if (data.event === "payment.failed") {
+
+                        // Failed
+                        if (updatedOrderStatus) {
+                              updatedOrderStatus.status = "Failed";
+                              updatedOrderStatus.failureReason = error_description;
+                              await updatedOrderStatus.save();
+                         }
+                       
+                          res.status(400).send({
+                           status: false,
+                           message: "Payment failed",
+                           reason: error_description,
+                         });
+                          return;
+                    }
 
     } catch(err : unknown){
         console.log("inside error of verify-route");

@@ -20,8 +20,8 @@ function MenuBar() {
   ];
 
   const InstructorHeading = [
-       { text: "Dashboard", path : "/dashboard" , icon: <LuCircleUserRound /> },
-       { text: "My Profile", path : "/my-profile" , icon: <LuCircleUserRound /> },
+      //  { text: "Dashboard", path : "/dashboard" , icon: <LuCircleUserRound /> },
+       { text: "My Profile", path : "/dashboard/my-profile" , icon: <LuCircleUserRound /> },
   ]
 
   const MyCourse = [{ text: "My Courses", path : "/dashboard/mycourse" , icon: <GiGraduateCap /> },]
@@ -41,7 +41,7 @@ function MenuBar() {
   
 
   return (
-    <div className="border-r-1 border-gray-500 bg-gray-800 flex flex-col items-start gap-10 pl-6 pt-15 pr-10 w-[15%] h-[92vh]">
+    <div className="border-r-1 border-gray-500 bg-gray-800 flex flex-col items-start gap-10 pl-6 pt-15 pr-10 w-[15%] min-h-[92vh]">
 
 
       {

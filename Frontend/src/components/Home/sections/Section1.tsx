@@ -7,7 +7,7 @@ import AboutCourses from "../AboutCourses"
 import StartCoding from "../StartCoding"
 function Section1() {
   return (
-    <div className="bg-gray-900 text-white flex flex-col gap-10 items-center pt-15 px-10 min-h-[100vh]">
+    <div className="bg-black text-white flex flex-col gap-20 items-center pt-15 px-10 min-h-[100vh]">
       <BecomeInstructor/>
       <Video/>
       <AboutCourses/>

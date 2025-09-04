@@ -6,11 +6,11 @@ import mongoose from "mongoose";
 
 export const createCategory = async(req : Request , res : Response) => {
     try{
-        const {name} = req.body;
+        const {name , desc} = req.body;
 
         // name validattion is pending
 
-        const createTag = await categoryModel.create({name});
+        const createTag = await categoryModel.create({name , desc});
         res.status(200).send({
             success : true,
             message : "Tag created",
@@ -60,7 +60,7 @@ export const getAllCategoies = async(req : Request , res : Response) => {
 // testing pending
 export const getAllCoursesOfCategory = async(req : Request , res : Response) => {
     try{ 
-
+        console.log('Fetching all category courses')
         const categoryIdString = req.query.categoryId;
 
         if (!categoryIdString || typeof categoryIdString !== 'string') {
@@ -83,26 +83,30 @@ export const getAllCoursesOfCategory = async(req : Request , res : Response) => 
         }
 
         // if valide category then find courses for this category
-        const findCategoryCourses = await courseModel.find({category : categoryId})
+        const findCategoryCourses = await courseModel.find({category : categoryId , status : 'Published'})
         .populate({path : 'instructor' , select : 'firstName lastName'}).exec();
 
-        if(findCategoryCourses.length === 0){
-            res.status(200).send({
-                success : true,
-                message : `No Course exists now for this category -> ${categoryId}`
-            })
-            return;
-        }
+        // console.log(findCategoryCourses)
+
+        // if(findCategoryCourses.length === 0){
+        //     res.status(200).send({
+        //         success : true,
+        //         message : `No Course exists now for this category -> ${categoryId}`
+        //     })
+        //     return;
+        // }
 
         // if courses found now find some more courses for recommendation
-        const findMorecourses = await courseModel.find({category : {$ne : categoryId}})
+        const findMorecourses = await courseModel.find({category : {$ne : categoryId} , status : 'Published'})
         .populate({path : 'instructor' , select : 'firstName lastName'})
         .sort({ 'created_at': -1 })
         .limit(5)
         .exec();
 
+        // console.log(findMorecourses);
+
         // Now find top selling courses
-        const findTopSellingCourses = await courseModel.find({numberOfStudentEnrolled : {$gt : 5}})
+        const findTopSellingCourses = await courseModel.find({numberOfStudentEnrolled : {$gt : 5} , status : 'Published'})
         .populate({path : 'instructor' , select : 'firstName lastName'})
         .exec();
 

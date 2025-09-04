@@ -4,7 +4,7 @@ interface CourseSubSectionType {
     subSectionName : string;
     description : string;
     duration : number;
-    videoUrl : string;
+    videoUrl : string | null;
 }
 
 const courseSubSectionSchema : Schema<CourseSubSectionType> = new Schema<CourseSubSectionType>({
@@ -25,7 +25,7 @@ const courseSubSectionSchema : Schema<CourseSubSectionType> = new Schema<CourseS
     },
     videoUrl : {
         type : String,
-        required : true,
+        default : null,
         trim : true
     }
 })

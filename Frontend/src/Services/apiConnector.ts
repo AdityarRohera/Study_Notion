@@ -1,7 +1,7 @@
 import axios from "axios";
 
 interface ApiRequestConfig {
-  method: "GET" | "POST" | "PUT" | "DELETE";
+  method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   url: string;
   bodyData?: any;
   headers?: Record<string, string>;

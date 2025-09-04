@@ -13,7 +13,9 @@ interface InputFieldType {
     endIcon ? : any;
     passwordType ? :string;
     varient? : 'Primary' | 'Secondary';
-    size : string
+    size : string;
+    min? : number;
+    max? : number;
     changeHandler? : (event : any) => void;
     iconChangeHandler? : (e : any) => void;
 }
@@ -33,7 +35,7 @@ const InputFieldSize : any = {
 
 const commonProperties = "flex gap-2"
 
-function InputField({type , placeholder , name , id , value , varient , size ,  startIcon , endIcon , passwordType, changeHandler , iconChangeHandler} : InputFieldType) {
+function InputField({type , placeholder , name , id , value , varient , size ,  startIcon , endIcon , passwordType , min , max, changeHandler , iconChangeHandler} : InputFieldType) {
   return (
     <div className={`relative ${commonProperties} ${InputFieldSize[size]}} `}>
 
@@ -43,7 +45,7 @@ function InputField({type , placeholder , name , id , value , varient , size ,  
           </span>
         )}
 
-        <input className={`${varient ? InputFieldVarient[varient] : InputFieldVarient?.Primary}${InputFieldSize[size]} ${startIcon ? 'pl-14' : ''} ${endIcon ? 'pr-14 ' : ''}`} type={type} placeholder={placeholder} name={name} id={id} value={value} onChange={changeHandler} />
+        <input className={`${varient ? InputFieldVarient[varient] : InputFieldVarient?.Primary}${InputFieldSize[size]} ${startIcon ? 'pl-14' : ''} ${endIcon ? 'pr-14 ' : ''}`} type={type} placeholder={placeholder} name={name} id={id} value={value} min={min} max={max} onChange={changeHandler} />
 
         {endIcon && (
          <span className="absolute inset-y-0 right-0 flex items-center pr-3">

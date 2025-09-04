@@ -13,3 +13,10 @@
 .scrollbar-hidden::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
 }
+
+.dragover {
+  border-color: #facc15;      /* yellow border */
+  background-color: #fef9c3;  /* light yellow background */
+  transition: all 0.2s ease;  /* smooth animation */
+}
+

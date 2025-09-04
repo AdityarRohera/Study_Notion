@@ -1,46 +1,61 @@
-// import React from 'react'
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io"
 import CourseSubSection from "./CourseSubSection"
 
-function CourseSection() {
+function CourseSection({ data, forceCollapse }: any) {
+  const { sectionName, sectionLecture } = data
+  const [isVisible, setIsVisible] = useState(false)
 
-  const [isVisible, setIsVisible] = useState(false);
+  // Handle Collapse / Expand all
+  useEffect(() => {
+    if (forceCollapse) setIsVisible(false)
+    else setIsVisible(true)
+  }, [forceCollapse])
 
   return (
-    <div className="border-1 border-gray-500 bg-gray-600 flex flex-col gap-0 justify-between items-center w-full min-h-[65px]"> 
-
-        {/* course-section heading bar (Always display content) */}
-        <div className="w-full min-h-[65px] flex gap-3 justify-between items-center px-5">
-
-            <div className="flex gap-2 items-center">
-                 {/* icon */}
-               <button className="cursor-pointer" onClick={() => setIsVisible((prev) => !prev)}>
-                 icon
-               </button>
-               Introduction & Basics
-            </div>
-
-            <div className="flex gap-2 items-center">
-              <span>5 lectures</span>
-              <span>51 min</span>
-            </div>
-
+    <div className="bg-[#1f1f1f] border border-gray-700 rounded-md overflow-hidden">
+      {/* Section header */}
+      <div
+        className="w-full flex justify-between items-center px-6 py-4 cursor-pointer hover:bg-gray-700/70 transition-colors"
+        onClick={() => setIsVisible((prev) => !prev)}
+      >
+        <div className="flex items-center gap-3">
+          {isVisible ? (
+            <IoIosArrowDown className="w-6 h-6 text-yellow-400" />
+          ) : (
+            <IoIosArrowForward className="w-6 h-6 text-yellow-400" />
+          )}
+          <h2 className="text-lg font-semibold text-gray-200">{sectionName}</h2>
         </div>
 
-        {/* course-sub-section -> (Hide content) */}
-        <div className={`w-full  ${isVisible ? 'block' : 'hidden'}`}>
-          <CourseSubSection/>
-          <CourseSubSection/>
-          <CourseSubSection/>
-          <CourseSubSection/>
+        <div className="flex gap-4 items-center text-base text-gray-400">
+          <span>{sectionLecture.length} lectures</span>
+          <span>51 min</span>
         </div>
+      </div>
 
+      {/* Subsections */}
+      <div
+        className={`transition-all duration-300 ${
+          isVisible ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+        } overflow-hidden`}
+      >
+        {sectionLecture.map((subSection: any) => (
+          <CourseSubSection
+            key={subSection._id}
+            subSectionData={subSection}
+          />
+        ))}
+      </div>
     </div>
   )
 }
 
 export default CourseSection
+
+
+
+
 
 
 
