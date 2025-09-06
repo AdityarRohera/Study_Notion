@@ -5,16 +5,7 @@ import { uploadFile , isFileSupport , deleteFile } from "../utils/cloudinaryServ
 import courseModel from "../models/courseModel";
 import { extractPublicId } from 'cloudinary-build-url';
 import courseSubSectionModel from "../models/CourseSubSection";
-
-function getPublicIdFromImageUrl(url: string) {
-    // Extract after /upload/
-    const path = url.split('/upload/')[1];
-    if (!path) return '';
-    // Remove version number if exists (v123456789/)
-    const withoutVersion = path.replace(/^v\d+\//, '');
-    // Remove extension
-    return withoutVersion.replace(/\.[^/.]+$/, '');
-}
+import { getPublicIdFromImageUrl } from "../utils/cloudinaryServies";
 
 
 
@@ -57,7 +48,7 @@ export const imageUploadToCloudinary = async(req : Request , res : Response) => 
             }
 
             // // checking size of image for upload
-                if(imageFile.size > 1 * 1024 * 1024){
+                if(imageFile.size > 20 * 1024 * 1024){
                     res.status(400).send({
                         success : false,
                         message : "Image size should be less than 1MB"
@@ -290,7 +281,7 @@ export const deleteVideoFromCloudinary = async(req : Request , res : Response) =
 
         res.status(200).send({
             success : true,
-             message: "Video file deleted successfully",
+            message: "Video file deleted successfully",
         })
 
 

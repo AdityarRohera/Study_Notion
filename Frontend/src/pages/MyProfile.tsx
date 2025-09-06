@@ -1,30 +1,31 @@
-// import React from 'react'
 
-import toast , {Toaster} from "react-hot-toast";
-// import { useSelector} from "react-redux";
-// import { type RootState } from "../Services/strore";
-import { useEffect } from "react";
 import MenuBar from "../components/commons/MenuBar";
 
 function MyProfile() {
+  const user = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user")!)
+    : null;
 
-    // const {firstName , lastName} = useSelector((state : RootState) => state.auth.user);
-  const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null;
-  const {firstName , lastName} = user;
-
-  useEffect(() => {
-    firstName && lastName && toast(`Welcome ${firstName + " " + lastName}!`, {
-                icon: '😀',
-       });
-  } , [])
-
+  const { firstName, lastName } = user || {};
 
   return (
-    <div>
-      <MenuBar/>
-      <Toaster/>
+    <div className="min-h-screen bg-black text-white flex">
+      {/* Navbar / Menu */}
+      <MenuBar />
+
+      {/* Greeting Banner */}
+      <div className="w-[85%] bg-gray-900 shadow-md py-6 px-8 text-center">
+        <h1 className="text-3xl md:text-4xl font-extrabold">
+          Welcome,
+          <span className="text-yellow-400 ml-2">
+            {firstName} {lastName}
+          </span>
+        </h1>
+      </div>
     </div>
-  )
+  );
 }
 
-export default MyProfile
+export default MyProfile;
+
+

@@ -4,6 +4,7 @@ export const signupValidation = ({
   firstName,
   lastName,
   email,
+  contact_no,
   createPassword,
   confirmPassword,
 }: any): string | boolean => {
@@ -12,6 +13,7 @@ export const signupValidation = ({
   if (!lastName) return 'Last name required';
   if (!email) return 'Email required';
   if (!email.includes("@")) return 'Invalid Email';
+  if (!contact_no) return 'contact_no Required';
   if (!createPassword) return 'Password required';
   if (!confirmPassword) return 'Confirm password required';
   if (createPassword !== confirmPassword) return 'Passwords do not match';

@@ -2,7 +2,7 @@
 import { BASE_URL, COURSE_API_ENDPOINT } from "../apiConfig";
 import { CATEGORY_API_ENDPOINT } from "../apiConfig";
 // import { setIsLoading } from "../../features/slices/categorySlice";
-import { setLoading } from "../../features/slices/authSlice";
+import { setLoading } from "../../features/slices/loadingSlice";
 import { apiConnector } from "../apiConnector";
 import toast from "react-hot-toast";
 import { setCategoryCourses } from "../../features/slices/categorySlice";

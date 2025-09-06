@@ -5,7 +5,7 @@ interface UserSchemaType {
     firstName : string;
     lastName : string;
     email : string;
-    contact_no : number;
+    contact_no : string;
     password : string;
     resetPasswordToken : string | null;
     resetPasswordExpires : Date | null;
@@ -36,12 +36,11 @@ const userSchema: Schema<UserSchemaType> = new Schema<UserSchemaType>({
         minlength: [5, 'Email must be at least 5 characters long'],
         maxlength: [100, 'Email cannot exceed 255 characters'],
     },
-    contact_no : {
-        type : Number,
-        // required : true,
-        // unique : true,
-        trim : true,
-        minlength : [10 , 'contact no. must be at least 10 characters long']
+    contact_no: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
     },
     password : {
         type : String,

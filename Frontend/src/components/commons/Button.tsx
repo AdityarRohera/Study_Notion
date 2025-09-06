@@ -6,7 +6,7 @@ import type { ReactElement } from "react";
 
 interface ButtonProps {
     variant : "primary" | "secondary" | "redish";
-    size : "sm" | "md" | "lg"|"xl"
+    size : "sm"|"md"| "lg"|"xl"
     text : string;
     startIcon? : ReactElement;
     endIcon? : ReactElement;

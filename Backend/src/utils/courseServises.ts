@@ -89,8 +89,8 @@ export const findSingleCourseByID = async(courseId : mongoose.Types.ObjectId) =>
     . exec()
 }
 
-export const getDraftCourse = async() => {
-    return await courseModel.findOne({status : 'Draft'})
+export const getDraftCourse = async(instructorId : mongoose.Types.ObjectId) => {
+    return await courseModel.findOne({instructor : instructorId , status : 'Draft'})
     .populate({
         path : 'courseContent' , populate : {path : 'subSection'}
     })

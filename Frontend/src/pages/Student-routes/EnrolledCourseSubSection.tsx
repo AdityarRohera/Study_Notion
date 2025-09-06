@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import CourseContentCard from "../../components/EnrolledCourses/CourseContentCard ";
 import { getSubSection } from "../../Services/operations/purchasedCoursesUtilis";
 import { useEffect, useState } from "react";
+import Loading from "../../components/commons/Loading";
 // import toast from "react-hot-toast";
 // import LecturePlayer from "../../components/commons/LecturePlayer";
 // import { useNavigate } from "react-router-dom";
@@ -29,7 +30,7 @@ function EnrolledCourseSubSection() {
     } , [])
 
     if(!subContentData){
-        return <div>Loading...</div>
+        return <Loading/>
     }
 
 //   const subSections = subContentData["68a7126044275c85325fc12d"] || [];

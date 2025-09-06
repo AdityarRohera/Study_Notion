@@ -40,7 +40,7 @@ export const sendOTP = async(dispatch : any , email : string , Navigate : any) :
 }
 
 
-export const signup = async(dispatch : any , {account_type , firstName , lastName , email , createPassword , otp} : any , Navigate : any) : Promise<any> => {
+export const signup = async(dispatch : any , {account_type , firstName , lastName , email , contact_no , createPassword , otp} : any , Navigate : any) : Promise<any> => {
      const toastId = toast.loading("Loading...")
          dispatch(setLoading(true));
 
@@ -49,7 +49,7 @@ export const signup = async(dispatch : any , {account_type , firstName , lastNam
          const response = await apiConnector(
             {method :'POST' ,
              url :`${BASE_URL}${USER_API_ENDPOINT.SIGNUP}`,
-             bodyData : {account_type , firstName , lastName , email , password : createPassword , otp , contact_no : Math.floor((Math.random() * 10) + 1)},
+             bodyData : {account_type , firstName , lastName , email , contact_no , password : createPassword , otp},
              headers : {'X-Requested-With': 'XMLHttpRequest'}
             });
 

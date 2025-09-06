@@ -64,12 +64,12 @@ export const resetPasswordToken = async (req : Request , res : Response) => {
    }
 
 export const resetPasswordVerification = async (req : Request , res : Response) => {
-        try{
+        try{    
+              console.log("Inside reset password verification")
               const {password , token} = req.body;
 
                // find user already exists or not
             const checkUser = await userModel.findOne({resetPasswordToken : token});
-            console.log(checkUser);
 
              // now verify user token
              if(!checkUser){
@@ -89,7 +89,6 @@ export const resetPasswordVerification = async (req : Request , res : Response) 
                 });
                 return;
              }
-
 
              // if user is verified now update user reset password and expiry 
               checkUser.resetPasswordToken = null;
@@ -116,7 +115,7 @@ export const resetPasswordVerification = async (req : Request , res : Response) 
             }
             res.status(500).send({
                 success : false,
-                message : "error comes in send otp",
+                message : "error comes in reset password verification",
                 error : errorMessage
             })
         }

@@ -1,5 +1,5 @@
 // import React from 'react'
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import InputField from "../commons/InputField";
 // import { setUser } from "../../features/slices/authSlice";
 import { sendOTP} from "../../Services/operations/auth";
@@ -12,12 +12,14 @@ import { setUser } from "../../features/slices/authSlice";
 import { signupValidation } from "../../Services/inputValidation";
 import toast, { Toaster } from "react-hot-toast";
 
-function SignUpForm(role : any) {
+function SignUpForm({role}: any) {
+  console.log(role);
+  
     const[showPassword ,setShowPassword] = useState({createPassword : false , confirmPassword : false});
         const dispatch = useDispatch()
         const Navigate = useNavigate();
 
-    const [signUpData , setSignUpData] = useState({account_type : `${role}` , firstName : '' , lastName : '' , email : '' , createPassword : '' , confirmPassword : '' , otp : ''});
+    const [signUpData , setSignUpData] = useState({account_type : role , firstName : '' , lastName : '' , email : '' , countryCode: '+91' , contact_no : '' , createPassword : '' , confirmPassword : '' , otp : ''});
 
     const iconChangeHandler = (e : any) => {
       const {name} = e.currentTarget;
@@ -29,6 +31,7 @@ function SignUpForm(role : any) {
         })
     }
 
+    console.log(signUpData)
     const changeHandler = (e : any) => {
         const {value , name} = e.target;
 
@@ -45,14 +48,20 @@ function SignUpForm(role : any) {
         e.preventDefault();
         console.log("signup form submited");
 
+        // signup data payload 
+         const payload = {
+            ...signUpData,
+            contact_no: `${signUpData.countryCode}${signUpData.contact_no}`, // store as string
+         };
+
         // input validation
-        const validation =  signupValidation(signUpData);
-        console.log(validation);
+        const validation =  signupValidation(payload);
+        console.log(payload);
 
         if(validation == true){
           // set user values
-          console.log('signup data -> ' , signUpData);
-          dispatch(setUser({user: signUpData,
+          console.log('signup data -> ' , payload);
+          dispatch(setUser({user: payload,
                            token: null,
                            isAuthenticated: false // or true if already authenticated));
                           }))
@@ -63,6 +72,10 @@ function SignUpForm(role : any) {
             toast.error(validation as string);
         }
     }
+
+     useEffect(() => {
+      setSignUpData((prev) => ({ ...prev, account_type: role }));
+     }, [role]);
 
 
     // console.log(signUpData);
@@ -119,26 +132,37 @@ function SignUpForm(role : any) {
       />
     </div>
 
-    {/* Phone Number */}
-    {/* <div>
-      <label htmlFor="signup-phone" className="block text-sm mb-1">Phone Number <span className="text-red-500">*</span></label>
-      <div className="flex gap-2">
-        <select className="bg-gray-800 text-gray-300 rounded-md px-2">
-          <option value="+91">+91</option>
-          <option value="+1">+1</option>
-          <option value="+44">+44</option>
-        </select>
-        <InputField
-          type="text"
-          placeholder="12345 67890"
-          id="signup-phone"
-          name="phone"
-          value={signUpData.phone}
-          size="lg"
-          changeHandler={changeHandler}
-        />
-      </div>
-    </div> */}
+    {/* contact_number*/}
+    <div>
+  <label htmlFor="signup-phone" className="block text-sm mb-1">
+    Phone Number <span className="text-red-500">*</span>
+  </label>
+  <div className="flex gap-2">
+    {/* Country Code Dropdown */}
+    <select
+      className="bg-gray-800 text-gray-300 rounded-md px-2"
+      name="countryCode"
+      value={signUpData.countryCode || "+91"}   // default to +91
+      onChange={changeHandler}
+    >
+      <option value="+91">+91</option>
+      <option value="+1">+1</option>
+      <option value="+44">+44</option>
+    </select>
+
+    {/* Phone Input */}
+    <InputField
+      type="tel"   // better than number for phone
+      placeholder="12345 67890"
+      id="contact_no"
+      name="contact_no"
+      value={signUpData.contact_no || ""}   // fallback empty string
+      size="lg"
+      changeHandler={changeHandler}
+    />
+  </div>
+</div>
+
 
     {/* Password + Confirm Password */}
     <div className="grid grid-cols-2 gap-6">

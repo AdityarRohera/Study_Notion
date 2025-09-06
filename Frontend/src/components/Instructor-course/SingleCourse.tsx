@@ -4,6 +4,8 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { getSingleCourse } from "../../Services/operations/instructorUtilis";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { formatDuration } from "../../Services/operations/common";
+import { Clock, Check } from "lucide-react";
 
 
 export default function SingleCourse({data} : any) {
@@ -48,15 +50,25 @@ export default function SingleCourse({data} : any) {
           </span>
 
           {/* Status Badge */}
-          <span className="bg-yellow-400 text-black px-4 py-1.5 rounded-full text-sm font-semibold w-fit">
-            Published
-          </span>
+           <span
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold w-fit
+                ${status === "Draft" ? "bg-red-500 text-white" : "bg-yellow-400 text-black"}
+              `}
+           >
+                {status === "Draft" ? (
+                  <Clock className="w-4 h-4" />
+                ) : (
+                  <Check className="w-4 h-4" />
+                )}
+                {status}
+           </span>
+           
         </div>
       </div>
 
       {/* Right: Duration / Price / Actions */}
       <div className="flex items-center gap-20 mr-10">
-        <span className="text-lg font-semibold text-gray-200">20h 10m</span>
+        <span className="text-lg font-semibold text-gray-200">{formatDuration(totalLength)}</span>
         <span className="text-lg font-bold text-green-400">₹{price}</span>
 
         {/* Actions */}
@@ -65,10 +77,12 @@ export default function SingleCourse({data} : any) {
             {/* <Pencil size={22} /> */}
             <MdEdit className="text-2xl" />
           </button>
+
           <button className="hover:text-red-400 transition cursor-pointer">
             {/* <Trash2 size={22} /> */}
             <RiDeleteBin6Line className="text-2xl" />
           </button>
+
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { fetchSingleCourse } from "../../Services/operations/instructorUtilis";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import Loading from "../../components/commons/Loading";
 
 
 function EnrolledCourseSections() {
@@ -30,7 +30,7 @@ function EnrolledCourseSections() {
 
 
   if(!courseContent){
-    return toast("Loading...")
+    return <Loading/>
   }
 
   return (

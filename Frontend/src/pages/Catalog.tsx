@@ -8,9 +8,13 @@ import { useDispatch} from "react-redux";
 import { getCategoryCourses } from "../Services/operations/categoryCourse";
 // import { HomePageExplore } from "../Data/homePageExplore";
 import { useParams } from "react-router-dom";
-
+import { useSelector} from "react-redux";
+import type { RootState } from "../Services/strore";
+import Loading from "../components/commons/Loading";
 
 function Catalog() {
+
+  const {loading} = useSelector((state : RootState) => state.loading)
 
       const location = useLocation();
       const dispatch = useDispatch();
@@ -30,6 +34,10 @@ function Catalog() {
     useEffect(() => {
         getCategoryCourses({dispatch , categoryId});
       } , [categoryId]);
+
+      if(loading){
+        return <Loading/>
+      }
 
 
   return (

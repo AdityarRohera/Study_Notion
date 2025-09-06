@@ -12,7 +12,8 @@ import CoursePopup from "../../components/Instructor-course/CoursePopup"
 import { useEffect, useRef, useState } from "react"
 import { useLocation } from "react-router-dom"
 import { getInstructorCourses } from "../../Services/operations/instructorUtilis"
-import { Toaster } from "react-hot-toast"
+import Loading from "../../components/commons/Loading"
+import Button from "../../components/commons/Button"
 
 function MyCourse() {
 
@@ -20,7 +21,7 @@ function MyCourse() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
-    const [instructorCourses , setInstructorCourses] = useState<any>([]);
+    const [instructorCourses , setInstructorCourses] = useState<any>(null);
 
     // console.log(instructorCourses)
     
@@ -28,6 +29,7 @@ function MyCourse() {
 
     const popUpRef = useRef<any>(null);
     const {token} = useSelector((state : RootState) => state.auth);
+    const {loading} = useSelector((state : RootState) => state.loading);
 
     if(!token){
       navigate('/login');
@@ -49,6 +51,13 @@ function MyCourse() {
         else openPopUp();
     }
 
+    // const deleteDraftCourseHandler = async() => {
+    //   console.log("Inside delte course handler");
+
+    //   await deleteFullCourse()
+
+    // }
+
     const getCourses = async() => {
       const data = await getInstructorCourses(dispatch , token);
       setInstructorCourses(data);
@@ -57,6 +66,10 @@ function MyCourse() {
   useEffect(() => {
       getCourses();
   } , [])
+
+  if(!instructorCourses){
+      return <Loading/>
+  }
 
 
   return (
@@ -108,7 +121,7 @@ function MyCourse() {
   {/* Instructor courses cards */}
   <div className="flex flex-col gap-6">
     {instructorCourses.map((course: any) => (
-      <SingleCourse key={course._id} data={course} />
+      <SingleCourse key={course._id} data={course}/>
     ))}
   </div>
 </div>
@@ -116,15 +129,24 @@ function MyCourse() {
 </div>
 
 
-      <button onClick={newCourseHandler} className="absolute top-[6%] right-[10%]  border text-2xl text-black bg-amber-300 p-2 rounded-2xl cursor-pointer">
+      {/* <button onClick={newCourseHandler} className="absolute top-[6%] right-[10%]  border text-2xl text-black bg-amber-300 p-2 rounded-2xl cursor-pointer">
         + New
-      </button>
+      </button> */}
+
+      <Button
+          variant="primary"
+          size="lg"
+          text={loading ? "Loading..." : "+ New"}   // ✅ Conditional text
+          className={`absolute top-[6%] right-[10%] text-2xl cursor-pointer 
+                      transition-all duration-300 ease-in-out 
+                      ${loading ? "bg-gray-400 cursor-not-allowed" : "hover:bg-yellow-500 hover:scale-105 hover:shadow-lg"}`}
+          onClick={newCourseHandler}
+      />
+
 
         <div ref={popUpRef} className="border absolute hidden">
           <CoursePopup close={closePopUp}/>
         </div>
-
-        <Toaster/>
     </div>
   )
 }

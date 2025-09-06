@@ -30,6 +30,7 @@ export const getSingleCourse = async(dispatch : any , courseId? : any) : Promise
              res = await apiConnector({
                              method : 'GET',
                              url : `${BASE_URL}${COURSE_API_ENDPOINT.GET_DRAFT_COURSE}`,
+                             headers : {'X-Requested-With': 'XMLHttpRequest' ,token: `${localStorage.getItem('token')}`} 
                           })
         }
         
@@ -60,20 +61,19 @@ export const getSingleCourse = async(dispatch : any , courseId? : any) : Promise
 
                 dispatch(setFullCourse(fullCourse));
                 toast.success("Success!", { id: toastId });
-                dispatch(setLoading(false));
-
                  // ✅ return here
                  return fullCourse;
-            }            
+            }         
         
-             dispatch(setLoading(false));
-             toast.success("Success!", { id: toastId });
-             return null;
+            //  dispatch(setLoading(false));
+            //  toast.success("Success!", { id: toastId });
+            //  return null;
 
     } catch(err : any){
-             const {message} = err.response.data
-             toast.error(`${message}` , {id : toastId});
              console.log(err);
+      } finally{
+            dispatch(setLoading(false));
+            toast.dismiss(toastId);
       }
 }
 
@@ -158,31 +158,32 @@ export const fetchSingleCourse = async (courseId? : any): Promise<any> => {
 
 export const deleteDraftCourse = async(dispatch : any) => {
 
-          const toastId = toast.loading("Loading...");
-          dispatch(setLoading(true));
+    const toastId = toast.loading("Loading...");
+    dispatch(setLoading(true));
+
     try{
         
-        // const createCourse = await apiConnector({
-        //                                           method : 'POST',
-        //                                           url : `${BASE_URL}${INSTRUCTOR_API_ENDPOINT.CREATE_COURSE}`,
-        //                                           bodyData : formData
-        // })
+        const res = await apiConnector({
+                                            method : 'DELETE',
+                                            url : `${BASE_URL}${COURSE_API_ENDPOINT.DELETE_DRAFT_COURSE}`,
+                                            headers : {'X-Requested-With': 'XMLHttpRequest' ,token: `${localStorage.getItem('token')}`} 
+                                        })
 
-        // console.log(createCourse.data);
-        setTimeout(() => {
-            console.log('deleted')
-        } , 2000);
+        console.log(res);
 
-        toast.success("Success!", {
+        if(res.data){
+            toast.success("Success!", {
                 id: toastId,
              });
-            
-        dispatch(setLoading(false));
+             return true;
+        }
 
     } catch(err : any){
         const {message} = err.response.data
              toast.error(`${message}` , {id : toastId});
              console.log(err);
+    } finally{
+         dispatch(setLoading(false));
     }
 }
 
@@ -273,13 +274,14 @@ export const createSection = async(dispatch : any , sectionName : string , cours
         console.log(createCourseSection.data);
         if(createCourseSection.data){
                 toast.success("Success!", { id: toastId });
-                dispatch(setLoading(false));
         }
 
     } catch(err : any){
         const {message} = err.response.data
              toast.error(`${message}` , {id : toastId});
              console.log(err);
+    } finally{
+        dispatch(setLoading(false));
     }
 }
 

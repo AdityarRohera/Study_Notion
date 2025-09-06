@@ -16,6 +16,7 @@ import AboutInstructor from "../components/courses/AboutInstructor";
 import { fetchSingleCourse } from "../Services/operations/instructorUtilis";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import Loading from "../components/commons/Loading";
 
 function FullCourse() {
 
@@ -23,7 +24,7 @@ function FullCourse() {
     const [aboutCourse, setAboutCourse] = useState<any>(null);
     const [sections, setSections] = useState<any[]>([]);
 
-    console.log("full course data -> " , aboutCourse , sections);
+    // console.log("full course data -> " , aboutCourse , sections);
 
     const fetchCourseData = async () => {
     try {
@@ -52,11 +53,11 @@ function FullCourse() {
   } , [])
 
 
-  if(!aboutCourse){
-        return(
-          <>Loading...</>
-        )
-  }
+    if(!aboutCourse){
+          return(
+            <Loading/>
+          )
+    }
 
 
   return (

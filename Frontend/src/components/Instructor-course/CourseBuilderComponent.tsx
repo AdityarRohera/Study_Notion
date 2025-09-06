@@ -10,36 +10,37 @@ import { fetchSingleCourse } from "../../Services/operations/instructorUtilis";
 import { createSection } from "../../Services/operations/instructorUtilis";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
+import Loading from "../commons/Loading";
 
 function CourseBuilderComponent() {
   const [aboutCourse, setAboutCourse] = useState<any>(null);
   const [sections, setSections] = useState<any[]>([]);
   const [newSectionName, setNewSectionName] = useState("");
-  const {state} = useParams();
+  const [loading, setLoading] = useState(false);       // for fetching course
+  const [creating, setCreating] = useState(false);     // for creating section
+  const { state } = useParams();
   const dispatch = useDispatch();
-  console.log(state)
-
-  // console.log(aboutCourse)
 
   // Fetch course data
   const fetchCourseData = async () => {
     try {
+      setLoading(true); // start loading
       const fullCourse = await fetchSingleCourse(state);
       if (fullCourse) {
         setAboutCourse(fullCourse.AboutCourse);
-
-        // ✅ sections now contain subsections
         setSections(
           fullCourse.courseContent.map((sec: any) => ({
             _id: sec._id,
             sectionName: sec.sectionName,
-            sectionLecture: sec.subSection || [], // subsections embedded
+            sectionLecture: sec.subSection || [],
           }))
         );
       }
     } catch (err: any) {
       console.error("Error fetching course:", err.message);
       toast.error("Failed to fetch course");
+    } finally {
+      setLoading(false); // stop loading
     }
   };
 
@@ -48,16 +49,26 @@ function CourseBuilderComponent() {
     if (!newSectionName) return toast.error("Empty section field");
     if (!aboutCourse?._id) return toast.error("Course not loaded yet");
 
-    await createSection(dispatch, newSectionName, aboutCourse._id);
-    setNewSectionName("");
-
-    // Refetch after adding section
-    fetchCourseData();
+    try {
+      setCreating(true); // start loading
+      await createSection(dispatch, newSectionName, aboutCourse._id);
+      setNewSectionName("");
+      await fetchCourseData(); // refresh sections
+    } catch (err) {
+      toast.error("Failed to add section");
+    } finally {
+      setCreating(true); // stop loading
+    }
   };
 
   useEffect(() => {
     fetchCourseData();
   }, []);
+
+  // ✅ Show loading while fetching/creating
+  if (loading || creating) {
+    return <Loading />;
+  }
 
   return (
     <div className="border flex flex-col gap-5 w-[45vw] p-5">
@@ -69,11 +80,11 @@ function CourseBuilderComponent() {
           {sections.map((section: any) => (
             <CourseBuilderSection
               key={section._id}
-              aboutCourseId = {aboutCourse._id}
+              aboutCourseId={aboutCourse._id}
               sectionName={section.sectionName}
               sectionId={section._id}
               sectionLecture={section.sectionLecture}
-              refreshSections={fetchCourseData}  // pass embedded subsections
+              refreshSections={fetchCourseData}
             />
           ))}
         </div>
@@ -91,9 +102,11 @@ function CourseBuilderComponent() {
 
         <button
           onClick={CreateSectionHandler}
-          className="text-2xl text-yellow-300 border rounded-xl p-2 w-[200px]"
+          className="flex items-center justify-center gap-2 w-[200px] py-2.5 text-lg font-semibold 
+                   text-yellow-300 border border-yellow-300 rounded-xl 
+                   hover:bg-yellow-300 hover:text-black transition-colors duration-200"
         >
-          + Create Section
+          + Add Section
         </button>
       </div>
 

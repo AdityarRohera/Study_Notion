@@ -11,7 +11,8 @@ export const COURSE_API_ENDPOINT = {
     CREATE : '/course/create-course',
     GET_SINGLE_COURSE : '/course/get-course',
     GET_DRAFT_COURSE : '/course/draft-course',
-    GET_COURSE_SECTION : '/course/get-section'
+    GET_COURSE_SECTION : '/course/get-section',
+    DELETE_DRAFT_COURSE : '/course/delete-draft-course'
 }
 
 export const CATEGORY_API_ENDPOINT = {

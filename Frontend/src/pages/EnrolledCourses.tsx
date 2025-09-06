@@ -4,9 +4,10 @@ import MenuBar from "../components/commons/MenuBar";
 import Heading from "../components/commons/Heading";
 import EnrolledCoursesContainer from "../components/EnrolledCourses/EnrolledCoursesContainer";
 import { getEnrolledCourses } from "../Services/operations/purchasedCoursesUtilis";
-import { useDispatch } from "react-redux";
+import { useDispatch} from "react-redux";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
+import Loading from "../components/commons/Loading";
 
 
 function EnrolledCourses() {
@@ -30,7 +31,7 @@ function EnrolledCourses() {
   } , [])
 
   if(!enrolledCourses){
-      return toast("Loading...")
+      return(<Loading/>)
   }
 
   return (

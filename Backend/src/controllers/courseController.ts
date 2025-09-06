@@ -6,6 +6,9 @@ import courseSectionModel from "../models/courseSectionModel";
 import mongoose from "mongoose";
 import { updateSingleCourse } from "../utils/courseServises";
 import courseSubSectionModel from "../models/CourseSubSection";
+import { deleteFile } from "../utils/cloudinaryServies";
+import { getPublicIdFromImageUrl } from "../utils/cloudinaryServies";
+
 
 
 export const createAndUpdateCourseHandler = async(req : Request , res : Response) => {
@@ -298,17 +301,31 @@ export const getSingleCourseHandler = async(req : Request , res : Response) => {
 }
 
 export const getDraftCourseHandler = async(req : Request , res : Response) => {
-    try{
+    try{    
+
+        console.log("Insidegetting draft course handler")
+         const userReq = req as AuthenticatedRequest;
+         const instructor = userReq.user.userId;
+         const instructorId = new mongoose.Types.ObjectId(instructor);
+         console.log(instructor)
+
+         if(!instructor){
+             res.status(400).send({
+                status : false,
+                message : "Instructor id required"
+             })
+             return;
+         }
 
         // search for draft course
-        const getFullDraftCourse = await getDraftCourse();
-        // if(!getFullDraftCourse){
-        //     res.status(400).send({
-        //         success : false,
-        //         message : "No Draft course available"
-        //     })
-        //     return;
-        // }
+        const getFullDraftCourse = await getDraftCourse(instructorId);
+        if(!getFullDraftCourse){
+            res.status(400).send({
+                success : false,
+                message : "No Draft course available"
+            })
+            return;
+        }
 
         res.status(200).send({
             success : true,
@@ -365,6 +382,91 @@ export const publishCourseHandler = async(req : Request , res : Response) => {
             res.status(500).send({
                 success : false,
                 message : "Error comes in course get single detailed course",
+                error : errorMessage
+            })
+    }
+}
+
+export const deleteDraftCourseHandler = async(req : Request , res : Response) => {
+    try{
+
+       const userReq = req as AuthenticatedRequest;
+       const instructor = userReq.user.userId;
+       const instructorId = new mongoose.Types.ObjectId(instructor);
+
+       // first find draft course of instructor
+
+        const getFullDraftCourse = await getDraftCourse(instructorId);
+        if(!getFullDraftCourse){
+            res.status(400).send({
+                success : false,
+                message : "No Draft course available"
+            })
+            return;
+        }
+        
+       // second delete thumbnail from cloudinary if thumbnail exists
+
+        // 2. Delete thumbnail from Cloudinary
+        if (getFullDraftCourse.thumbnail) {
+                try {
+
+                  const publicId = decodeURIComponent(getPublicIdFromImageUrl(getFullDraftCourse.thumbnail));
+                  const deleteImage = await deleteFile({ public_id: publicId, resource_type: "image" });
+
+                  if (deleteImage.result !== "ok") {
+                     res.status(400).json({ success: false, message: "Cloudinary file not found" });
+                     return;
+                  }
+
+                } catch (err) {
+                  console.error("Cloudinary delete failed:", err);
+                }
+        }  
+       
+       // thirt delete full course with all it's contend and subcontent
+
+       if (getFullDraftCourse.courseContent.length) {
+            // 1. Find all sections for this course
+            const sections = await courseSectionModel.find({
+              _id: { $in: getFullDraftCourse.courseContent },
+            });
+
+            console.log("All course sections -> " , sections);
+        
+            // 2. Collect all subContent ids
+            const allSubContentIds = sections.flatMap(sec => sec.subSection);
+            console.log("all sub-section Ids -> " , allSubContentIds)
+        
+            // 3. Delete all subContents
+            if (allSubContentIds.length) {
+              await courseSubSectionModel.deleteMany({ _id: { $in: allSubContentIds } });
+            }
+        
+            // 4. Delete all sections
+            await courseSectionModel.deleteMany({ _id: { $in: getFullDraftCourse.courseContent } });
+        }
+
+            // fourth delete course itself
+            await courseModel.findByIdAndDelete(getFullDraftCourse._id);
+
+
+            // last return success response
+             res.status(200).send({
+                 success : true,
+                 message : "Course Deleted successfully",
+             })
+            
+    } catch(err : unknown){
+        let errorMessage;
+            if(err instanceof Error){
+                errorMessage = err.message
+            } else if(typeof(err) === 'string'){
+                errorMessage = err
+            }
+            res.status(500).send({
+                success : false,
+                message : "Error comes in dlete draft course",
                 error : errorMessage
             })
     }

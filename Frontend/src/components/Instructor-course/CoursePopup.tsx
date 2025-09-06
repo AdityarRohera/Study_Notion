@@ -2,8 +2,12 @@
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { deleteDraftCourse } from "../../Services/operations/instructorUtilis";
+import { useSelector} from "react-redux";
+import type { RootState } from "../../Services/strore";
 
 export default function CoursePopup({close} : any) {
+
+   const {loading} = useSelector((state :RootState ) => state.loading)
 
     const navigate = useNavigate(); 
     const dispatch = useDispatch();
@@ -16,8 +20,10 @@ export default function CoursePopup({close} : any) {
   const handleStartNew = async() => {
     console.log("🆕 Start New clicked");
         // first call delete api and then navigate to new page
-        await deleteDraftCourse(dispatch);
-        navigate('/dashboard/mycourse/course-info/new-course');
+        const res = await deleteDraftCourse(dispatch);
+        if(res){
+           navigate('/dashboard/mycourse/course-info/new-course');
+        }
   };
 
 return (
@@ -51,12 +57,19 @@ return (
           >
             Continue Draft
           </button>
-          <button
+
+         <button
             onClick={handleStartNew}
-            className="px-4 py-2 bg-red-600 rounded-lg hover:bg-red-500"
+            disabled={loading}
+            className={`px-4 py-2 rounded-lg transition-colors duration-300 ${
+              loading
+                ? "bg-red-700 hover:bg-red-700 cursor-not-allowed"
+                : "bg-red-600 hover:bg-red-500"
+            }`}
           >
-            Start New
-          </button>
+        {loading ? "Deleting Draft Course..." : "Start New"}
+        </button>
+        
         </div>
       </div>
     </div>

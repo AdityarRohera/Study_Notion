@@ -12,6 +12,7 @@ import toast, { Toaster } from "react-hot-toast";
 import DragAndDropFile from "../commons/DragAndDropFile";
 import { deleteImage } from "../../Services/operations/cloudinaryUpload";
 import { useParams } from "react-router-dom";
+import Loading from "../commons/Loading";
 
 // interface courseFormType {
 //   courseName : string;
@@ -30,6 +31,7 @@ export default function CourseForm({state} : {state : string}) {
 
   const userId = useSelector((state : RootState) => state.auth.user._id);
   const {AboutCourse} = useSelector((state : RootState) => state.full_course);
+  const [load , setLoad] = useState(false);
   const dispatch = useDispatch();
   const courseId = useParams();
   // console.log(courseId)
@@ -60,7 +62,7 @@ export default function CourseForm({state} : {state : string}) {
         whatYouWillLearn,
         price,
         thumbnail,
-        category,
+        category : category?._id || category,
         user: userId,
         course: _id
       });
@@ -89,8 +91,6 @@ export default function CourseForm({state} : {state : string}) {
         }
       })();
     }
-
-
     }
   }
 };
@@ -124,30 +124,44 @@ export default function CourseForm({state} : {state : string}) {
   }
 
   // course data submit handler
-  const courseDataSubmitHandler = async(e : any) => {
-        e.preventDefault();
-
-        // upload image first
+      const courseDataSubmitHandler = async (e: any) => {
+      e.preventDefault();
+      
+      setLoad(true);
+      
+      try {
+        // 1. Upload image
         const thumbnailUrl = await uploadImg(file);
         console.log("Thumbnail uploaded:", thumbnailUrl);
-
+      
         if (!thumbnailUrl) {
-            toast("No thumbnail uploaded");
-            return;
+          toast("No thumbnail uploaded");
+          return;
         }
-
-      const finalCourseData = {
-        ...createCourseData,
-        thumbnail: thumbnailUrl,
-      };
-
-      // update local state for UI consistency (optional)
-      setCreateCourseData(finalCourseData);
-
-        console.log("Final data -> " , finalCourseData);
+      
+        // 2. Prepare final data
+        const finalCourseData = {
+          ...createCourseData,
+          thumbnail: thumbnailUrl,
+        };
+      
+        setCreateCourseData(finalCourseData);
+      
+        console.log("Final data -> ", finalCourseData);
+      
+        // 3. Save course
         await createCourseForm(finalCourseData);
-        toast("Course saved");
-  }
+      
+        toast.success("Course saved ✅");
+      } catch (err) {
+        console.error("Error saving course:", err);
+        toast.error("Failed to save course ❌");
+      } finally {
+        // ✅ always reset load
+        setLoad(false);
+      }
+    };
+
 
   // get category handler
   const getCategories = async() => {
@@ -180,9 +194,11 @@ export default function CourseForm({state} : {state : string}) {
   } , [])
 
   if(!category){
-    return(
-      <div>Loading...</div>
-    )
+    return <Loading/>
+  }
+
+  if(load){
+    return <Loading/>
   }
 
   return (
@@ -246,7 +262,7 @@ export default function CourseForm({state} : {state : string}) {
         <DragAndDropFile text={"Upload Image"} file={file} setFile={setFile} removeFile={fileRemove}/>
 
         <div>
-            <label htmlFor="desc">Course Short Description <span className="text-red-400">*</span></label>
+            <label htmlFor="desc">Benefit Of The Course <span className="text-red-400">*</span></label>
             <textarea
               className="bg-gray-50 border-0 border-b-2 border-white text-gray-900 text-xl rounded-lg  focus:ring-0 focus:border-white block w-full h-[100px] p-2.5 dark:bg-gray-700 dark:border-b-1 dark:border-white dark:placeholder-gray-400 dark:text-white dark:focus:ring-0 dark:focus:border-white"
               placeholder="Write course learning" name="whatYouWillLearn" value={createCourseData.whatYouWillLearn} onChange={courseDataHandler}

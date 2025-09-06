@@ -1,6 +1,6 @@
 
 
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import { BASE_URL , COURSE_API_ENDPOINT, ENROLLED_COURSE_API_ENDPOINT } from "../apiConfig";
 import { apiConnector } from "../apiConnector";
 import { setLoading } from "../../features/slices/loadingSlice";
@@ -9,7 +9,6 @@ import { setLoading } from "../../features/slices/loadingSlice";
 
 export const getEnrolledCourses = async(dispatch : any) => {
         console.log("Inside getting enrolled course function")
-        const toastId = toast.loading("Loading...");
          dispatch(setLoading(true));
 
     try{
@@ -25,10 +24,12 @@ export const getEnrolledCourses = async(dispatch : any) => {
                 return res.data;
             }
 
-    }catch(err : any){
-         const {message} = err.response.data
-         toast.error(`${message}` , {id : toastId});
+        dispatch(setLoading(true));
+
+    }catch(err : any){   
          console.log(err);
+    } finally {
+        dispatch(setLoading(false)); // ✅ always reset loading
     }
 }
 
