@@ -45,4 +45,4 @@ export const ENROLLED_COURSE_API_ENDPOINT = {
     ENROLLED_COURSES : '/purchase/enrolled-courses'
 }
 
-export const BASE_URL = "http://localhost:4000/api/v1";
+export const BASE_URL = import.meta.env.VITE_BASE_URL;
