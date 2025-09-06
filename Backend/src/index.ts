@@ -13,10 +13,7 @@ app.use(fileUpload({
   tempFileDir : '/tmp/'
 }))
 
-app.use(cors({
-  origin : "http://localhost:5173",
-   optionsSuccessStatus: 200
-}))
+app.use(cors())
 
 // database connect here
 import dbConnect from './config/dnConnect';
