@@ -42,7 +42,6 @@ app.use('/api/v1' , categoryRoute);
 app.use('/api/v1/payment' , paymentRoute);
 app.use('/api/v1/purchase' , purchaseRoute);
 
-
 app.listen(port, async() => {
   console.log(`App listening on port ${port}`);
 })
