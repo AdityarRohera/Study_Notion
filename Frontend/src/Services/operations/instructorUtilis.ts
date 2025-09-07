@@ -25,6 +25,7 @@ export const getSingleCourse = async(dispatch : any , courseId? : any) : Promise
              res = await apiConnector({
                              method : 'GET',
                              url : `${BASE_URL}${COURSE_API_ENDPOINT.GET_SINGLE_COURSE}/${courseId}`,
+                             headers : {'X-Requested-With': 'XMLHttpRequest' ,token: `${localStorage.getItem('token')}`}
                           })
         } else{
              res = await apiConnector({
@@ -83,16 +84,23 @@ export const fetchSingleCourse = async (courseId? : any): Promise<any> => {
         console.log("inside fetch full course")
         let res
         if(courseId){
+            // console.log("calling courseId single course" , courseId);
              res = await apiConnector({
             method: 'GET',
             url: `${BASE_URL}${COURSE_API_ENDPOINT.GET_SINGLE_COURSE}/${courseId}`,
+            headers : {'X-Requested-With': 'XMLHttpRequest' ,token: `${localStorage.getItem('token')}`}
             });
         } else{
+            // console.log("calling api")
              res = await apiConnector({
             method: 'GET',
             url: `${BASE_URL}${COURSE_API_ENDPOINT.GET_DRAFT_COURSE}`,
+            headers : {'X-Requested-With': 'XMLHttpRequest' ,token: `${localStorage.getItem('token')}`}
             });
         }
+
+        // console.log("Res of fetch single course function@@@@@@@@@" , res);
+        
 
         if (res.data.course) {
             const {
@@ -252,6 +260,9 @@ export const createCourseForm = async(formData : object) => {
         })
 
         console.log(createCourse.data);
+        if(createCourse.data){
+            return true;
+        }
 
     } catch(err : any){
         console.log("error comes in upload img")
@@ -261,6 +272,7 @@ export const createCourseForm = async(formData : object) => {
 
 export const createSection = async(dispatch : any , sectionName : string , courseId : any) => {
 
+    console.log("INside create course -section")
     const toastId = toast.loading("Loading...");
           dispatch(setLoading(true));
           

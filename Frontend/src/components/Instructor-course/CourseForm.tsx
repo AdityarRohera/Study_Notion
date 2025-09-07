@@ -11,7 +11,7 @@ import { useDispatch } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import DragAndDropFile from "../commons/DragAndDropFile";
 import { deleteImage } from "../../Services/operations/cloudinaryUpload";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Loading from "../commons/Loading";
 
 // interface courseFormType {
@@ -34,6 +34,7 @@ export default function CourseForm({state} : {state : string}) {
   const [load , setLoad] = useState(false);
   const dispatch = useDispatch();
   const courseId = useParams();
+  const navigate = useNavigate()
   // console.log(courseId)
 
   const[createCourseData , setCreateCourseData] = useState<any>({courseName : '' , courseDesc : '' , user :`${userId}` , whatYouWillLearn : '' , price:'' , thumbnail:'' , category:'' , course : ''});
@@ -47,11 +48,26 @@ export default function CourseForm({state} : {state : string}) {
 
   // fill form data if exist in database
   const preFillState = async () => {
+    console.log(courseId);
   if (state === "new-course") return;
 
-  if (state === "draft-course" || courseId) {
+  if (state === "draft-course" || courseId.state) {
     // pick AboutCourse if exists, else fetch from API
-    const data = AboutCourse ?? (await getSingleCourse(dispatch))?.AboutCourse;
+    console.log("Inside draft")
+    let data;
+
+  // Case 1: Draft course
+  if (state === "draft-course" && courseId.state === "draft-course") {
+    console.log("Inside draft course only")
+    data = AboutCourse ?? (await getSingleCourse(dispatch))?.AboutCourse;
+  }
+
+  // Case 2: Specific course by ID
+  else if (courseId.state) {
+    console.log("Inside Specific course")
+    console.log(courseId.state)
+    data = AboutCourse ?? (await getSingleCourse(dispatch, courseId.state))?.AboutCourse;
+  }
 
     if (data) {
       const {courseName , courseDesc , whatYouWillLearn , price , thumbnail , category , _id} = data;
@@ -132,12 +148,13 @@ export default function CourseForm({state} : {state : string}) {
       try {
         // 1. Upload image
         const thumbnailUrl = await uploadImg(file);
-        console.log("Thumbnail uploaded:", thumbnailUrl);
+        console.log("Thumbnail uploaded:", thumbnailUrl , typeof thumbnailUrl);
       
-        if (!thumbnailUrl) {
-          toast("No thumbnail uploaded");
-          return;
+        if (!thumbnailUrl || typeof thumbnailUrl !== "string") {
+              toast.error("No thumbnail uploaded");
+              return;
         }
+
       
         // 2. Prepare final data
         const finalCourseData = {
@@ -150,7 +167,10 @@ export default function CourseForm({state} : {state : string}) {
         console.log("Final data -> ", finalCourseData);
       
         // 3. Save course
-        await createCourseForm(finalCourseData);
+        const createRes = await createCourseForm(finalCourseData);
+        if(createRes){
+            navigate('/dashboard/mycourse/course-info/draft-course')
+        }
       
         toast.success("Course saved ✅");
       } catch (err) {
@@ -219,8 +239,8 @@ export default function CourseForm({state} : {state : string}) {
         </div>
 
         <div>
-             <label htmlFor="price">Price <span className="text-red-400">*</span></label>
-            <InputField type="text" size="xl" placeholder="Price"  name="price" value={createCourseData.price} changeHandler={courseDataHandler}/>
+            <label htmlFor="price">Price <span className="text-red-400">*</span></label>
+            <InputField classNameProp={"[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"}  type="number" size="xl" placeholder="Price"  name="price" value={createCourseData.price} changeHandler={courseDataHandler}/>
         </div>
 
        <div>

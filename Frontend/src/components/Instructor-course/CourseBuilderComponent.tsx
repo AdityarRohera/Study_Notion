@@ -19,30 +19,45 @@ function CourseBuilderComponent() {
   const [loading, setLoading] = useState(false);       // for fetching course
   const [creating, setCreating] = useState(false);     // for creating section
   const { state } = useParams();
+  console.log(state)
   const dispatch = useDispatch();
 
   // Fetch course data
-  const fetchCourseData = async () => {
-    try {
-      setLoading(true); // start loading
-      const fullCourse = await fetchSingleCourse(state);
-      if (fullCourse) {
-        setAboutCourse(fullCourse.AboutCourse);
-        setSections(
-          fullCourse.courseContent.map((sec: any) => ({
-            _id: sec._id,
-            sectionName: sec.sectionName,
-            sectionLecture: sec.subSection || [],
-          }))
-        );
-      }
-    } catch (err: any) {
-      console.error("Error fetching course:", err.message);
-      toast.error("Failed to fetch course");
-    } finally {
-      setLoading(false); // stop loading
+ const fetchCourseData = async () => {
+  try {
+    setLoading(true);
+
+    let fullCourse;
+
+    // Case 1: If courseId exists → fetch by ID
+    if (state && state !== 'draft-course') {
+      fullCourse = await fetchSingleCourse(state);
     }
-  };
+    // Case 2: Otherwise fetch draft
+    else {
+      console.log('getting draft-course')
+      fullCourse = await fetchSingleCourse();
+    }
+
+    // console.log(fullCourse)
+
+    if (fullCourse) {
+      setAboutCourse(fullCourse.AboutCourse);
+
+      setSections(
+        fullCourse.courseContent.map((sec: any) => ({
+          _id: sec._id,
+          sectionName: sec.sectionName,
+          sectionLecture: sec.subSection || [],
+        }))
+      );
+    }
+  } catch (err: any) {
+    console.error("Error fetching course:", err.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Create new section
   const CreateSectionHandler = async () => {
@@ -57,7 +72,7 @@ function CourseBuilderComponent() {
     } catch (err) {
       toast.error("Failed to add section");
     } finally {
-      setCreating(true); // stop loading
+      setCreating(false); // stop loading
     }
   };
 

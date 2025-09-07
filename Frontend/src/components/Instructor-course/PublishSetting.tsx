@@ -8,10 +8,11 @@ import toast, { Toaster } from "react-hot-toast";
 import { publishDraftCourse } from "../../Services/operations/instructorUtilis";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { fetchSingleCourse } from "../../Services/operations/instructorUtilis";
 
 function PublishSetting() {
 
-    const {AboutCourse ,courseContent , courseSection} = useSelector((state : RootState) => state.full_course);
+    // const {AboutCourse ,courseContent , courseSection} = useSelector((state : RootState) => state.full_course);
     const {token} = useSelector((state: RootState) => state.auth);
     const [check , setCheck] = useState(false)
     const dispatch = useDispatch();
@@ -24,7 +25,9 @@ function PublishSetting() {
         toast.error('Check field for make course publish');
         return;
       }
-       if(!AboutCourse && !courseContent && !courseSection){
+
+      const res = await fetchSingleCourse()
+       if(!res){
           toast.error('Course Data is not field')
           return;
        }

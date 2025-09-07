@@ -131,20 +131,47 @@ function NavBar() {
                     {/* profile */}
 
                     {
-                      user && 
-                      <div className="">
-                        
-                      <div ref={profileRef} onClick={openProfileHandler} className="cursor-pointer relative rounded-full ">
-                        <img id="profile" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmBs0YZevOEuYRwxd-bG_ttYxcHKeXIRpIhB-1e6yrZ-znl-hISmDqwak&s" className="border rounded-full w-[40px] flex justify-center items-center" alt="" />
-                      </div>
+  user && (
+    <div className="relative">
+      {/* Profile Icon */}
+      <div
+        ref={profileRef}
+        onClick={openProfileHandler}
+        className="cursor-pointer rounded-full"
+      >
+        <img
+          id="profile"
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmBs0YZevOEuYRwxd-bG_ttYxcHKeXIRpIhB-1e6yrZ-znl-hISmDqwak&s"
+          className="border rounded-full w-[45px] h-[45px] object-cover"
+          alt="profile"
+        />
+      </div>
 
-                      <div className={`absolute top-[85%] right-[200px] bg-gray-500 text-white w-[120px] flex flex-col items-center justify-center h-[80px] rounded-xl p-1 z-10 ${!visible ? 'opacity-0' : ''}`}>
-                          <Link to={'/dashboard/my-profile'}>Dashboard</Link>
-                          <hr />
-                          <button className="cursor-pointer" onClick={() => logout(navigate)}>Logout</button>
-                      </div>
-                    </div>
-                    }
+      {/* Dropdown */}
+      <div
+        className={`absolute top-[110%] left-1/2 -translate-x-1/2 bg-gray-700 text-white w-[160px] flex flex-col items-center justify-center rounded-xl p-3 z-10 shadow-lg transition-all duration-200 ${
+          !visible ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
+      >
+          <Link
+            to={"/dashboard/my-profile"}
+            className="w-full text-center py-2 rounded-lg hover:bg-gray-600 hover:scale-105 transition-all duration-200"
+          >
+            Dashboard
+          </Link>
+          <hr className="w-full border-gray-500 my-1" />
+          <button
+            className="w-full py-2 rounded-lg hover:bg-red-500 hover:scale-105 transition-all duration-200"
+            onClick={() => logout(navigate)}
+          >
+            Logout
+          </button>
+      </div>
+
+    </div>
+  )
+}
+
 
                     
                   </div>
