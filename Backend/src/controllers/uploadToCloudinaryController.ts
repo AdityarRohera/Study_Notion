@@ -115,7 +115,7 @@ export const videoUploadToCloudinary = async(req : Request , res : Response) => 
 
        // check video type is supported or not
 
-       const videoSupportedType = ['mp4', 'mov', 'avi', 'wmv', 'mkv', 'webm' , 'mts'];
+       const videoSupportedType = ['mp4', 'mov', 'avi', 'wmv', 'mkv', 'webm' , 'mts' , 'm4v'];
        
        if(!isFileSupport(fileType.ext.toLowerCase() , videoSupportedType)){
             res.status(400).send({

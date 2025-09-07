@@ -14,15 +14,13 @@ import { getPublicIdFromImageUrl } from "../utils/cloudinaryServies";
 export const createAndUpdateCourseHandler = async(req : Request , res : Response) => {
     try{
 
-            const {courseName , courseDesc , whatYouWillLearn , price , thumbnail , category , user} = req.body;
-            console.log(courseName , courseDesc , whatYouWillLearn , price , thumbnail , category , user)
-            const {course} = req.body;
+            const {courseName , courseDesc , whatYouWillLearn , price , category , user , course} = req.body;
+            const thumbnail = req.body.thumbnail || null;
+            console.log(courseName , courseDesc , whatYouWillLearn , price , thumbnail , category , user);
+
             const categoryId = new mongoose.Types.ObjectId(category);
             const userId = new mongoose.Types.ObjectId(user);
-            let courseId = null;
-            if(course){
-                 courseId = new mongoose.Types.ObjectId(course);
-            }
+            let courseId = course ? new mongoose.Types.ObjectId(course) : null;
             // console.log("Details -> " , courseName, courseDesc , whatYouWillLearn , price , thumbnail , category , user);
 
             // validation is pending
@@ -33,7 +31,7 @@ export const createAndUpdateCourseHandler = async(req : Request , res : Response
 
             // check courseId is exist or not
                 if(courseId){
-                    const findCourseById = await updateSingleCourse(course, createCoursePayload);
+                    const findCourseById = await updateSingleCourse(courseId, createCoursePayload);
 
                     if(findCourseById){
                         res.status(200).send({
@@ -302,14 +300,12 @@ export const getSingleCourseHandler = async(req : Request , res : Response) => {
 
 export const getDraftCourseHandler = async(req : Request , res : Response) => {
     try{    
-
-        console.log("Insidegetting draft course handler")
+        console.log("Inside getting draft course handler")
          const userReq = req as AuthenticatedRequest;
-         const instructor = userReq.user.userId;
-         const instructorId = new mongoose.Types.ObjectId(instructor);
-         console.log(instructor)
+         const instructorId = userReq.user.userId;
+         console.log(instructorId);
 
-         if(!instructor){
+         if(!instructorId){
              res.status(400).send({
                 status : false,
                 message : "Instructor id required"
