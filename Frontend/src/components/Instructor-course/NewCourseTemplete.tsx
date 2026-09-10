@@ -1,16 +1,28 @@
-import StepTracker from "./StepTracker"
-import CourseForm from "./CourseForm"
-import CourseBuilderComponent from "./CourseBuilderComponent"
-import CourseTips from "./CourseTips"
-import { useNavigate } from "react-router-dom"
-import PublishSetting from "./PublishSetting"
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
+import StepTracker from "./StepTracker";
+import CourseForm from "./CourseForm";
+import CourseBuilderComponent from "./CourseBuilderComponent";
+import CourseTips from "./CourseTips";
+import PublishSetting from "./PublishSetting";
 
-function NewCourseTemplete({varient , state} : {varient : string , state?:string}) {
+const STEP_BY_VARIANT: Record<string, number> = {
+  courseInfo: 1,
+  courseBuilder: 2,
+  publish: 3,
+};
 
-    const navigate = useNavigate()
+function NewCourseTemplete({
+  varient,
+  state,
+}: {
+  varient: string;
+  state?: string;
+}) {
+  const navigate = useNavigate();
 
-    const nextHandler = () => {
+  const nextHandler = () => {
     if (varient === "courseInfo") {
       navigate(`/dashboard/mycourse/course-builder/${state}`);
     } else if (varient === "courseBuilder") {
@@ -26,74 +38,50 @@ function NewCourseTemplete({varient , state} : {varient : string , state?:string
     }
   };
 
-
   return (
-     <div className="min-h-screen w-[85vw] flex flex-col gap-8 px-10 pr-25 py-12 bg-black text-white border relative">
+    <div className="flex flex-col gap-8">
+      <StepTracker current={STEP_BY_VARIANT[varient] ?? 1} />
 
-            {/* LEFT SIDE: Form and Steps */}
-            {/* <div className="flex-1 flex flex-col gap-6 border w-[50vw]"> */}
+      <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_20rem] xl:gap-10">
+        <div className="flex min-w-0 flex-col gap-6">
+          {varient === "courseInfo" && <CourseForm state={state!} />}
+          {varient === "courseBuilder" && <CourseBuilderComponent />}
+          {varient === "publish" && <PublishSetting />}
 
-              <StepTracker />
+          {/* Step navigation */}
+          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+            {varient !== "courseInfo" ? (
+              <button
+                type="button"
+                onClick={prevHandler}
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-ink-700 px-5 text-sm font-semibold text-ink-100 transition-all duration-200 hover:border-ink-600 hover:bg-ink-850"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </button>
+            ) : (
+              <span />
+            )}
 
-              {
-                varient === 'courseInfo' && <CourseForm state={state!}/>  
-              }
-              {
-                varient === 'courseBuilder' && <CourseBuilderComponent/>  
-              }
-              {
-                varient === 'publish' && <PublishSetting/>
-              }
-
-              <div className={` flex gap-5 ${varient == 'publish' ? 'justify-start gap-[300px]' : 'justify-center gap-5'} mt-4 items-end`}>
-
-                {
-                    varient !== 'courseInfo' &&
-                    <div className="flex mt-4">
-                    <button onClick={prevHandler} className="  bg-yellow-400 text-black font-semibold px-6 py-2 rounded-lg hover:bg-yellow-300 transition">
-                       ◀ Prev
-                    </button>
-                    </div>
-                }
-
-                {
-                    varient !== 'publish' &&
-                    <div className="flex mt-4">
-                    <button onClick={nextHandler} className="bg-yellow-400 text-black font-semibold px-6 py-2 rounded-lg hover:bg-yellow-300 transition">
-                      Next ➤
-                    </button>
-                    </div>
-                }
-
-                {/* {
-                  varient == 'publish' && 
-
-                  <div className="flex justify-end gap-4">
-                    <div>
-                    <button className="bg-yellow-400 text-black font-semibold px-6 py-2 rounded-lg hover:bg-yellow-300 transition">
-                      Save as Draft
-                    </button>
-                  </div>
-                  
-                  <div>
-                    <button onClick={} className="bg-yellow-400 text-black font-semibold px-6 py-2 rounded-lg hover:bg-yellow-300 transition">
-                      Save and Publish
-                    </button>
-                  </div>
-                  </div>
-                } */}
-
-              </div>
-              
-            {/* </div> */}
-
-            {/* RIGHT SIDE: Tips */}
-            <div className="absolute right-[10%]">
-              <CourseTips />
-            </div>
-            
+            {varient !== "publish" && (
+              <button
+                type="button"
+                onClick={nextHandler}
+                className="group inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-brand-400 px-5 text-sm font-semibold text-ink-950 transition-all duration-200 hover:bg-brand-300 hover:shadow-glow active:scale-[0.98]"
+              >
+                Next
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+              </button>
+            )}
+          </div>
         </div>
-  )
+
+        <div className="xl:sticky xl:top-24 xl:self-start">
+          <CourseTips />
+        </div>
+      </div>
+    </div>
+  );
 }
 
-export default NewCourseTemplete
+export default NewCourseTemplete;

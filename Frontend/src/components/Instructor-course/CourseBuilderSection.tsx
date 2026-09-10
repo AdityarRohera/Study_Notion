@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { ChevronDown, Pencil, Plus, Trash2, X } from "lucide-react";
+
 import SectionAndSubsectionHeading from "./SectionAndSubsectionHeading";
 import LectureEditing from "./LectureEditing";
 
@@ -7,13 +9,13 @@ function CourseBuilderSection({
   sectionId,
   sectionLecture,
   aboutCourseId,
-  refreshSections
+  refreshSections,
 }: {
   sectionName: string;
   sectionId: string;
   sectionLecture: any[];
   aboutCourseId: string;
-  refreshSections : () => void;
+  refreshSections: () => void;
 }) {
   const [openLectureId, setOpenLectureId] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState(false);
@@ -26,90 +28,113 @@ function CourseBuilderSection({
     setOpenLectureId(null);
   };
 
+  const lectures = Array.isArray(sectionLecture) ? sectionLecture : [];
+
   return (
-    <div className="bg-gray-800 text-gray-100 rounded-md shadow p-4 mb-4">
-      {/* Section Header */}
-      <div className="flex justify-between items-center">
+    <div className="overflow-hidden rounded-xl border border-ink-800 bg-ink-850">
+      {/* Section header */}
+      <div className="flex items-center justify-between gap-3 px-4 py-3.5">
         <SectionAndSubsectionHeading heading={sectionName} />
+
         <button
-          className="text-gray-400 hover:text-white"
+          type="button"
+          aria-expanded={!collapsed}
+          aria-label={collapsed ? "Expand section" : "Collapse section"}
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-ink-400 transition-colors hover:bg-ink-800 hover:text-white"
           onClick={() => setCollapsed(!collapsed)}
         >
-          {collapsed ? "⬆️" : "⬇️"}
+          <ChevronDown
+            className={`h-4 w-4 transition-transform duration-300 ${
+              collapsed ? "-rotate-90" : ""
+            }`}
+          />
         </button>
       </div>
 
-      {/* Lectures */}
-      {!collapsed && sectionLecture.length > 0 && (
-        <div className="mt-3 flex flex-col gap-2">
-          {sectionLecture.map((lecture) => {
+      {!collapsed && (
+        <div className="flex flex-col gap-2 border-t border-ink-800 p-3">
+          {lectures.map((lecture) => {
             const { _id, subSectionName } = lecture;
             return (
               <div
                 key={_id}
-                className="flex justify-between items-center bg-gray-700 px-4 py-2 rounded hover:bg-gray-600 cursor-pointer"
+                className="flex items-center justify-between gap-3 rounded-lg bg-ink-900 px-3.5 py-2.5 transition-colors hover:bg-ink-800"
               >
-                <div>
-                  <p className="font-medium">{subSectionName}</p>
-                  {/* <p className="text-gray-400 text-sm">{description}</p>
-                  <p className="text-gray-500 text-xs">{duration} mins</p> */}
-                </div>
-                <div className="flex gap-2">
+                <p className="truncate text-sm font-medium text-ink-200">
+                  {subSectionName}
+                </p>
+
+                <div className="flex shrink-0 gap-1">
                   <button
+                    type="button"
                     onClick={() => OpenEditLectureHandler(_id)}
-                    className="text-blue-400 hover:text-blue-200"
+                    aria-label={`Edit ${subSectionName}`}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-ink-400 transition-colors hover:bg-accent-500/10 hover:text-accent-300"
                   >
-                    ✏️
+                    <Pencil className="h-3.5 w-3.5" />
                   </button>
-                  <button className="text-red-500 hover:text-red-300">🗑️</button>
+                  <button
+                    type="button"
+                    aria-label={`Delete ${subSectionName}`}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-ink-400 transition-colors hover:bg-danger-500/10 hover:text-danger-400"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
                 </div>
               </div>
             );
           })}
 
-          {/* Add Lecture */}
-          {/* <button
+          <button
+            type="button"
             onClick={() => OpenEditLectureHandler("new")}
-            className="text-yellow-400 font-semibold mt-2 hover:text-yellow-300 self-start"
+            className="inline-flex h-10 items-center gap-2 self-start rounded-lg px-3 text-sm font-semibold text-brand-300 transition-colors hover:bg-brand-400/10"
           >
-            + Add Lecture
-          </button> */}
+            <Plus className="h-4 w-4" />
+            Add lecture
+          </button>
         </div>
       )}
 
-      <button
-            onClick={() => OpenEditLectureHandler("new")}
-            className="text-yellow-400 font-semibold mt-2 hover:text-yellow-300 self-start"
-          >
-            + Add Lecture
-          </button>
-
-      {/* Lecture Editing Modal */}
+      {/* Lecture editing modal */}
       {openLectureId && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
-          <div className="bg-gray-900 text-white w-[500px] rounded-lg p-6 shadow-lg relative">
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-[70] flex items-center justify-center p-4"
+        >
+          <div
+            className="absolute inset-0 bg-ink-950/80 backdrop-blur-sm"
+            onClick={closeEditLectureHandler}
+          />
+
+          <div className="sn-card relative max-h-[85vh] w-full max-w-lg animate-scale-in overflow-y-auto p-5 sm:p-7">
             <button
-              className="absolute top-3 right-3 text-gray-400 hover:text-white"
+              type="button"
+              aria-label="Close"
+              className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-lg text-ink-400 transition-colors hover:bg-ink-800 hover:text-white"
               onClick={closeEditLectureHandler}
             >
-              ✖️
+              <X className="h-4 w-4" />
             </button>
+
             <LectureEditing
-              refreshSections = {refreshSections}
+              refreshSections={refreshSections}
               courseId={aboutCourseId}
               lectureId={openLectureId === "new" ? undefined : openLectureId}
               sectionId={sectionId}
               subSectionName={
-                sectionLecture.find((lec) => lec._id === openLectureId)?.subSectionName
+                lectures.find((lec) => lec._id === openLectureId)
+                  ?.subSectionName
               }
               description={
-                sectionLecture.find((lec) => lec._id === openLectureId)?.description
+                lectures.find((lec) => lec._id === openLectureId)?.description
               }
               duration={
-                sectionLecture.find((lec) => lec._id === openLectureId)?.duration
+                lectures.find((lec) => lec._id === openLectureId)?.duration
               }
               videoUrl={
-                sectionLecture.find((lec) => lec._id === openLectureId)?.videoUrl
+                lectures.find((lec) => lec._id === openLectureId)?.videoUrl
               }
               close={closeEditLectureHandler}
             />
@@ -121,5 +146,3 @@ function CourseBuilderSection({
 }
 
 export default CourseBuilderSection;
-
-

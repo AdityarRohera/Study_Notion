@@ -1,22 +1,20 @@
-// import React from 'react'
-
 import { useEffect, useState } from "react";
-import DragAndDropFile from "../commons/DragAndDropFile"
-import InputField from "../commons/InputField"
-import { uploadVideo } from "../../Services/operations/cloudinaryUpload";
 import { useDispatch } from "react-redux";
-import { createSubSection } from "../../Services/operations/instructorUtilis";
-// import { useSelector} from "react-redux";
-// import { type RootState } from "../../Services/strore";
-import { deleteVideo } from "../../Services/operations/cloudinaryUpload";
 import toast from "react-hot-toast";
-import { Toaster } from "react-hot-toast";
-// import Loading from "../commons/Loading";
+
+import DragAndDropFile from "../commons/DragAndDropFile";
+import InputField from "../commons/InputField";
+import { Spinner } from "../commons/Loading";
+import {
+  deleteVideo,
+  uploadVideo,
+} from "../../Services/operations/cloudinaryUpload";
+import { createSubSection } from "../../Services/operations/instructorUtilis";
 
 interface VideoLectureData {
   subSectionName: string;
   description: string;
-  duration: number | null;   // <-- allow both
+  duration: number | null;
   videoUrl: string;
   courseSectionId: string;
   subSectionId: string;
@@ -35,7 +33,7 @@ function LectureEditing({
   refreshSections,
 }: any) {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false); // ✅ loading state
+  const [loading, setLoading] = useState(false);
 
   const [videoLectureData, setVideoLectureData] = useState<VideoLectureData>({
     subSectionName,
@@ -89,14 +87,13 @@ function LectureEditing({
     }
   }, [subSectionName, description, duration, videoUrl]);
 
-  // ✅ submit handler with loading
   const VideoFormSubmitHandler = async (e: any) => {
     e.preventDefault();
-    setLoading(true); // start loading
+    setLoading(true);
     try {
       const url = await uploadVideo(file);
       if (!url) {
-        toast("Video upload failed");
+        toast.error("Video upload failed");
         return;
       }
 
@@ -114,14 +111,14 @@ function LectureEditing({
 
       const res = await createSubSection(dispatch, finalVideoLectureData);
       if (res) {
-        toast("Video subsection created!");
+        toast.success("Lecture saved");
         close();
         refreshSections();
       }
     } catch (err) {
       toast.error("Failed to save lecture");
     } finally {
-      setLoading(false); // stop loading
+      setLoading(false);
     }
   };
 
@@ -157,59 +154,55 @@ function LectureEditing({
     }
   };
 
-
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-500/60">
-      <form
-        onSubmit={VideoFormSubmitHandler}
-        className="bg-[#111827] text-white rounded-lg w-[600px] p-6 relative"
-      >
-
-         {/* ✅ Uploading Overlay */}
-          {loading && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-lg z-50">
-              <div className="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
-              <p className="mt-4 text-lg font-semibold text-yellow-600">Uploading...</p>
-            </div>
-          )}
-
-        
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">Editing Lecture</h2>
+    <form onSubmit={VideoFormSubmitHandler} className="relative">
+      {/* Uploading overlay */}
+      {loading && (
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center rounded-xl bg-ink-900/85 backdrop-blur-sm">
+          <Spinner className="h-9 w-9" />
+          <p className="mt-4 text-sm font-semibold text-brand-300">
+            Uploading lecture…
+          </p>
         </div>
+      )}
 
-        {/* Upload Video */}
+      <h2 className="pr-8 font-display text-lg font-bold text-white">
+        {lectureId ? "Edit lecture" : "Add a lecture"}
+      </h2>
+      <p className="mt-1.5 text-sm text-ink-400">
+        Upload the video, then give learners a title and a short description.
+      </p>
+
+      <div className="mt-6 flex flex-col gap-5">
         <DragAndDropFile
-          text={"Video Lecture"}
-          fileType={"lecture"}
-          url={videoUrl}
+          text="Video lecture"
           file={file}
           setFile={setFile}
           removeFile={fileRemove}
+          accept="video/*"
+          hint="MP4 recommended, up to 12MB"
         />
 
-        {/* Lecture Title */}
-        <div className="mb-6">
-          <label className="block text-sm font-semibold mb-2">
-            Lecture Title <span className="text-red-500">*</span>
+        <div>
+          <label htmlFor="subSectionName" className="sn-label">
+            Lecture title <span className="text-danger-400">*</span>
           </label>
           <InputField
             type="text"
+            id="subSectionName"
             size="xl"
             name="subSectionName"
             value={videoLectureData.subSectionName}
-            placeholder="Enter Lecture Title..."
+            placeholder="e.g. Setting up your environment"
             changeHandler={changeHandler}
           />
         </div>
 
-        {/* Duration */}
-        <div className="mb-6">
-          <label className="block text-sm font-semibold mb-2">
-            Video Playback Time <span className="text-red-500">*</span>
-          </label>
-          <div className="flex gap-4">
+        <div>
+          <span className="sn-label">
+            Video playback time <span className="text-danger-400">*</span>
+          </span>
+          <div className="grid grid-cols-3 gap-3">
             <InputField
               type="number"
               size="xl"
@@ -243,41 +236,39 @@ function LectureEditing({
           </div>
         </div>
 
-        {/* Description */}
-        <div className="mb-6">
-          <label className="block text-sm font-semibold mb-2">
-            Lecture Description <span className="text-red-500">*</span>
+        <div>
+          <label htmlFor="lecture-description" className="sn-label">
+            Lecture description <span className="text-danger-400">*</span>
           </label>
           <textarea
-            placeholder="Enter Course Description.."
-            className="w-full p-3 bg-[#1f2937] border border-gray-500 rounded-md text-white focus:outline-none"
+            id="lecture-description"
+            placeholder="What does this lecture cover?"
+            className="sn-field min-h-24 resize-y"
             name="description"
             value={videoLectureData.description}
             onChange={changeHandler}
-          ></textarea>
+          />
         </div>
+      </div>
 
-        {/* Buttons */}
-        <div className="flex justify-end gap-4">
-          <button
-            type="button"
-            onClick={() => close()}
-            className="bg-[#374151] text-white px-6 py-2 rounded-md"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="bg-yellow-400 text-black px-6 py-2 rounded-md font-semibold"
-          >
-            Save Edits
-          </button>
-        </div>
-      </form>
-      <Toaster />
-    </div>
+      <div className="mt-7 flex flex-col-reverse gap-3 border-t border-ink-800 pt-6 sm:flex-row sm:justify-end">
+        <button
+          type="button"
+          onClick={() => close()}
+          className="inline-flex h-11 items-center justify-center rounded-xl border border-ink-700 px-5 text-sm font-semibold text-ink-100 transition-all duration-200 hover:border-ink-600 hover:bg-ink-850"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          disabled={loading}
+          className="inline-flex h-11 items-center justify-center rounded-xl bg-brand-400 px-5 text-sm font-semibold text-ink-950 transition-all duration-200 hover:bg-brand-300 hover:shadow-glow active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          Save lecture
+        </button>
+      </div>
+    </form>
   );
 }
 
 export default LectureEditing;
-

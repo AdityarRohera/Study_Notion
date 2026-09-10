@@ -1,73 +1,115 @@
-// File: CourseCard.jsx or CourseCard.tsx
-
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Star, Users } from "lucide-react";
 
-const CourseCard = ({data} : any) => {
-    // destructure data
-    const {courseName , instructor , TotalNumberRated , totalSum , price , _id} = data;
-    console.log(instructor);
-    
-    const calAvgRating = () => {
-        const rating = totalSum / TotalNumberRated;
-        return rating;
-    }
+const FALLBACK_THUMBNAIL =
+  "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80";
 
-    let rating = 0;
-    useEffect(() => {
-         rating = calAvgRating();
-    } , [totalSum , TotalNumberRated])
+/** Renders 5 stars with a half-lit final star when the rating warrants it. */
+function RatingStars({ rating }: { rating: number }) {
+  return (
+    <span className="flex items-center gap-0.5" aria-hidden="true">
+      {Array.from({ length: 5 }).map((_, i) => {
+        const filled = rating >= i + 1;
+        const half = !filled && rating > i;
+        return (
+          <Star
+            key={i}
+            className={`h-3.5 w-3.5 ${
+              filled
+                ? "fill-brand-400 text-brand-400"
+                : half
+                  ? "fill-brand-400/40 text-brand-400"
+                  : "text-ink-600"
+            }`}
+          />
+        );
+      })}
+    </span>
+  );
+}
 
-    console.log("Inside Single Course card -> " , data);
+const CourseCard = ({ data }: any) => {
+  const {
+    courseName,
+    instructor,
+    TotalNumberRated,
+    totalSum,
+    price,
+    _id,
+    thumbnail,
+    courseDesc,
+  } = data;
+
+  // Guard against divide-by-zero on brand-new courses.
+  const rating =
+    TotalNumberRated > 0 ? Number(totalSum) / Number(TotalNumberRated) : 0;
+  const ratingLabel = rating > 0 ? rating.toFixed(1) : "New";
+
+  const instructorName = instructor
+    ? `${instructor.firstName ?? ""} ${instructor.lastName ?? ""}`.trim()
+    : "StudyNotion";
 
   return (
-    <Link to={`/course/${_id}`} className="w-85 min-h-[350px] rounded-xl overflow-hidden bg-gray-900 shadow-lg transition-alsl duration-400 hover:scale-110 cursor-pointer">
-
-      <div className="relative">
+    <Link
+      to={`/course/${_id}`}
+      className="sn-card sn-card-hover group flex h-full flex-col overflow-hidden focus-visible:outline-offset-4"
+    >
+      <div className="relative aspect-video overflow-hidden bg-ink-850">
         <img
-          src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTv8e36ZbCu562FVEK3XF-KoLEzjCVtQUPHJA&s' // Replace with actual path
-          alt="img"
-          className="w-full h-48 object-cover"
+          src={thumbnail || FALLBACK_THUMBNAIL}
+          alt=""
+          loading="lazy"
+          className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
         />
-        <span className="absolute top-2 left-2 bg-pink-500 text-white text-xs px-2 py-1 rounded">
-          Bestseller
-        </span>
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-ink-950/70 to-transparent opacity-60"
+          aria-hidden="true"
+        />
+
+        {TotalNumberRated > 0 && rating >= 4.5 && (
+          <span className="sn-badge absolute left-3 top-3 bg-brand-400 text-ink-950">
+            Bestseller
+          </span>
+        )}
       </div>
 
-    <div className="p-4">
-       <h2 className="text-md font-semibold text-white mb-2">
-         {courseName}
-       </h2>
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="sn-clamp-2 font-display text-base font-bold leading-snug text-white transition-colors duration-200 group-hover:text-brand-200">
+          {courseName}
+        </h3>
 
-        <p className="text-sm text-gray-400">{`${instructor.firstName} ${instructor.lastName}`}</p>
+        {courseDesc && (
+          <p className="sn-clamp-2 mt-2 text-sm leading-relaxed text-ink-400">
+            {courseDesc}
+          </p>
+        )}
 
-  <div className="flex items-center gap-1 mt-2">
-    <span className="text-yellow-500 font-semibold">{rating}</span>
-    {[...Array(4)].map((_, i) => (
-      <svg
-        key={i}
-        className="w-4 h-4 text-yellow-400 fill-current"
-        viewBox="0 0 20 20"
-      >
-        <path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.561-.955L10 0l2.951 5.955 6.561.955-4.756 4.635 1.122 6.545z" />
-      </svg>
-    ))}
-    <svg
-      className="w-4 h-4 text-yellow-400 stroke-current fill-none"
-      viewBox="0 0 20 20"
-      strokeWidth="1"
-    >
-      <path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.561-.955L10 0l2.951 5.955 6.561.955-4.756 4.635 1.122 6.545z" />
-    </svg>
-    <span className="text-sm text-gray-400 ml-2">({TotalNumberRated})</span>
-  </div>
+        <p className="mt-3 flex items-center gap-1.5 text-xs text-ink-400">
+          <Users className="h-3.5 w-3.5" />
+          {instructorName}
+        </p>
 
-  <p className="text-lg font-bold mt-2 text-white">{`Rs. ${price}`}</p>
-</div>
+        <div className="mt-3 flex items-center gap-2">
+          <span className="text-sm font-bold text-brand-300">
+            {ratingLabel}
+          </span>
+          <RatingStars rating={rating} />
+          <span className="text-xs text-ink-500">
+            ({TotalNumberRated ?? 0})
+          </span>
+        </div>
 
+        <div className="mt-auto flex items-center justify-between pt-5">
+          <span className="font-display text-lg font-extrabold text-white">
+            ₹{price}
+          </span>
+          <span className="text-xs font-semibold text-brand-300 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            View course →
+          </span>
+        </div>
+      </div>
     </Link>
   );
 };
 
 export default CourseCard;
-

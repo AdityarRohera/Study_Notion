@@ -1,19 +1,16 @@
-// import React from 'react'
-// import Heading from "../commons/Heading"
-// import AutoCodebarLayout from "./AutoCodebarLayout"
-// import AutoCode from "./AutoCode"
-import Info from "./Info"
-import Code from "./Code"
+import Info from "./Info";
+import Code from "./Code";
 
+/** Split section: story on the left, code on the right. */
 function AboutCourses() {
-
-    // const clickHandler = () => {console.log("clicked")}
   return (
-    <div className="flex gap-5 rounded-xl bg-[#0d1117] text-white w-[85%] mx-auto p-6">
-      <Info />
-      <Code />
-    </div>
-  )
+    <section className="sn-container-wide w-full">
+      <div className="grid items-center gap-10 rounded-3xl border border-ink-800 bg-ink-900/60 p-6 sm:p-10 lg:grid-cols-2 lg:gap-14 lg:p-14">
+        <Info />
+        <Code variant="html" />
+      </div>
+    </section>
+  );
 }
 
-export default AboutCourses
+export default AboutCourses;

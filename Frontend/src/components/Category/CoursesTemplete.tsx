@@ -1,41 +1,70 @@
+import { useState } from "react";
 
-import Heading from "../commons/Heading"
 import CardContainer from "./CardContainer";
 
 interface CourseTempleteType {
-    heading : string;
-    filterBar? : boolean;
-    name : string;
+  heading: string;
+  subheading?: string;
+  filterBar?: boolean;
+  name: string;
 }
 
-function CoursesTemplete({heading , filterBar , name} : CourseTempleteType) {
+const FILTERS = ["Most Popular", "New", "Trending"];
+
+function CoursesTemplete({
+  heading,
+  subheading,
+  filterBar,
+  name,
+}: CourseTempleteType) {
+  const [activeFilter, setActiveFilter] = useState(FILTERS[0]);
+
   return (
-    <div className=" text-white flex flex-col gap-10">
+    <section className="flex flex-col gap-6 text-white">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h2 className="font-display text-2xl font-extrabold text-white sm:text-3xl">
+            {heading}
+          </h2>
+          {subheading && (
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-400">
+              {subheading}
+            </p>
+          )}
+        </div>
 
-    {/* Top heading */}
-      <div className="text-white flex flex-col gap-10">
-        <Heading text={heading} variant="primary" size="lg"/>
-
-      {/* filter div */}
-      {
-        filterBar &&
-        <div className="flex flex-col gap-2">
-         <div className="flex items-center gap-5">
-             <span>Most Popular</span>
-             <span>New</span>
-             <span>Trending</span>
-         </div>
-      <hr className="text-white" />
+        {filterBar && (
+          <div
+            role="tablist"
+            aria-label="Sort courses"
+            className="scrollbar-hidden flex gap-1 overflow-x-auto rounded-xl border border-ink-800 bg-ink-900 p-1"
+          >
+            {FILTERS.map((filter) => {
+              const isActive = filter === activeFilter;
+              return (
+                <button
+                  key={filter}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => setActiveFilter(filter)}
+                  className={`whitespace-nowrap rounded-lg px-3.5 py-2 text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? "bg-ink-800 text-brand-300"
+                      : "text-ink-400 hover:text-white"
+                  }`}
+                >
+                  {filter}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
-      }
 
-      </div>
-
-
-      {/* Cards Container */}
-      <CardContainer name={name}/>
-    </div>
-  )
+      <CardContainer name={name} />
+    </section>
+  );
 }
 
 export default CoursesTemplete;

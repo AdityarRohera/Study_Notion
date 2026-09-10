@@ -1,33 +1,38 @@
-import { useState } from "react"
-import CourseSection from "./CourseSection"
-import { formatDuration } from "../../Services/operations/common"
+import { useState } from "react";
 
-function CourseContent({ courseContent , duration }: any) {
-  const [allCollapsed, setAllCollapsed] = useState(false)
+import CourseSection from "./CourseSection";
+import { formatDuration } from "../../Services/operations/common";
 
-  // Calculate totals
-  const totalSections = courseContent.length
-  const totalLectures = courseContent.reduce(
-    (acc: number, sec: any) => acc + sec.sectionLecture.length,
+function CourseContent({ courseContent, duration }: any) {
+  const [allCollapsed, setAllCollapsed] = useState(false);
+
+  const sections = Array.isArray(courseContent) ? courseContent : [];
+  const totalSections = sections.length;
+  const totalLectures = sections.reduce(
+    (acc: number, sec: any) => acc + (sec.sectionLecture?.length ?? 0),
     0
-  )
-  // For simplicity, fake total duration. Ideally sum durations here
+  );
   const totalDuration = formatDuration(duration);
 
   return (
-    <div className="text-white flex flex-col gap-6 w-[63%] min-h-[300px] mt-20 mx-18">
-      {/* Heading and totals */}
+    <section className="flex flex-col gap-5">
       <div className="flex flex-col gap-3">
-        <h1 className="text-2xl font-semibold">Course content</h1>
+        <h2 className="font-display text-xl font-bold text-white sm:text-2xl">
+          Course content
+        </h2>
 
-        <div className="flex justify-between items-center text-gray-400 text-sm">
-          <div className="flex gap-2">
-            <span>{totalSections} sections</span>•
-            <span>{totalLectures} lectures</span>•
+        <div className="flex flex-col gap-2 text-sm text-ink-400 sm:flex-row sm:items-center sm:justify-between">
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span>{totalSections} sections</span>
+            <span aria-hidden="true">•</span>
+            <span>{totalLectures} lectures</span>
+            <span aria-hidden="true">•</span>
             <span>{totalDuration} total length</span>
-          </div>
+          </p>
+
           <button
-            className="text-yellow-400 hover:underline"
+            type="button"
+            className="self-start text-sm font-semibold text-brand-300 transition-colors hover:text-brand-200 sm:self-auto"
             onClick={() => setAllCollapsed((prev) => !prev)}
           >
             {allCollapsed ? "Expand all sections" : "Collapse all sections"}
@@ -35,9 +40,8 @@ function CourseContent({ courseContent , duration }: any) {
         </div>
       </div>
 
-      {/* Sections list */}
-      <div className="border border-gray-700 rounded-lg overflow-hidden divide-y divide-gray-700">
-        {courseContent.map((section: any) => (
+      <div className="overflow-hidden rounded-2xl border border-ink-800">
+        {sections.map((section: any) => (
           <CourseSection
             key={section._id}
             data={section}
@@ -45,9 +49,8 @@ function CourseContent({ courseContent , duration }: any) {
           />
         ))}
       </div>
-    </div>
-  )
+    </section>
+  );
 }
 
-export default CourseContent
-
+export default CourseContent;

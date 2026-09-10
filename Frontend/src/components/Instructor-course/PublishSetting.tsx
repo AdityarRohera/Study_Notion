@@ -1,72 +1,95 @@
-// import React from 'react'
-
-import { useState } from "react"
-import Heading from "../commons/Heading"
-import { useSelector} from "react-redux";
-import { type RootState } from "../../Services/strore";
-import toast, { Toaster } from "react-hot-toast";
-import { publishDraftCourse } from "../../Services/operations/instructorUtilis";
-import { useDispatch } from "react-redux";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { fetchSingleCourse } from "../../Services/operations/instructorUtilis";
+import toast from "react-hot-toast";
+import { Rocket } from "lucide-react";
+
+import { type RootState } from "../../Services/strore";
+import {
+  fetchSingleCourse,
+  publishDraftCourse,
+} from "../../Services/operations/instructorUtilis";
 
 function PublishSetting() {
+  const { token } = useSelector((state: RootState) => state.auth);
+  const [check, setCheck] = useState(false);
+  const [publishing, setPublishing] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-    // const {AboutCourse ,courseContent , courseSection} = useSelector((state : RootState) => state.full_course);
-    const {token} = useSelector((state: RootState) => state.auth);
-    const [check , setCheck] = useState(false)
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    console.log(check);
+  const publishCourseHandler = async () => {
+    if (!check) {
+      toast.error("Tick the box above to publish this course");
+      return;
+    }
 
-    const publishCourseHandler = async() => {
-      console.log("Inside publish course func.");
-      if(!check){
-        toast.error('Check field for make course publish');
+    setPublishing(true);
+    try {
+      const res = await fetchSingleCourse();
+      if (!res) {
+        toast.error("Course Data is not field");
         return;
       }
 
-      const res = await fetchSingleCourse()
-       if(!res){
-          toast.error('Course Data is not field')
-          return;
-       }
-
-       // now call api for publish course 
-       await publishDraftCourse(dispatch , navigate , token!);
-
+      // now call api for publish course
+      await publishDraftCourse(dispatch, navigate, token!);
+    } finally {
+      setPublishing(false);
     }
-
+  };
 
   return (
-    <div className=" border-1 border-gray-50 bg-gray-800 w-[45vw] h-[15vh] p-5 flex flex-col gap-5">
-      <Heading text="Publish Settings"/>
-
-      <div className="flex items-center gap-2">
-        <input type="checkbox" name="check-box" checked={check} className="border w-8 h-8" onChange={() => {setCheck(!check)}} />
-        <label htmlFor="check-box">Make this course publish</label>
+    <div className="sn-card p-5 sm:p-7">
+      <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-400/12 text-brand-300">
+        <Rocket className="h-5 w-5" />
       </div>
 
-      
+      <h2 className="font-display text-lg font-bold text-white sm:text-xl">
+        Publish settings
+      </h2>
+      <p className="mt-1.5 text-sm leading-relaxed text-ink-400">
+        Publishing makes this course visible in the catalog and available to
+        buy. You can unpublish later without losing any content.
+      </p>
 
-      <div className="flex justify-end gap-4 mt-18 z-10 ml-50">
-        <div>
-        <button className="bg-yellow-400 text-black font-semibold px-6 py-2 rounded-lg hover:bg-yellow-300 transition">
-          Save as Draft
+      <label className="mt-6 flex cursor-pointer items-start gap-3 rounded-xl border border-ink-800 bg-ink-850 p-4 transition-colors hover:border-ink-700">
+        <input
+          type="checkbox"
+          name="check-box"
+          checked={check}
+          className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer rounded border-ink-600 accent-brand-400"
+          onChange={() => setCheck(!check)}
+        />
+        <span>
+          <span className="block text-sm font-semibold text-white">
+            Make this course public
+          </span>
+          <span className="mt-0.5 block text-xs text-ink-400">
+            I've reviewed the course details, sections and lectures.
+          </span>
+        </span>
+      </label>
+
+      <div className="mt-7 flex flex-col-reverse gap-3 border-t border-ink-800 pt-6 sm:flex-row sm:justify-end">
+        <button
+          type="button"
+          onClick={() => navigate("/dashboard/mycourse")}
+          className="inline-flex h-11 items-center justify-center rounded-xl border border-ink-700 px-5 text-sm font-semibold text-ink-100 transition-all duration-200 hover:border-ink-600 hover:bg-ink-850"
+        >
+          Save as draft
+        </button>
+
+        <button
+          type="button"
+          onClick={publishCourseHandler}
+          disabled={publishing}
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-brand-400 px-5 text-sm font-semibold text-ink-950 transition-all duration-200 hover:bg-brand-300 hover:shadow-glow active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {publishing ? "Publishing…" : "Save and publish"}
         </button>
       </div>
-      
-      <div>
-        <button onClick={publishCourseHandler} className="bg-yellow-400 text-black font-semibold px-6 py-2 rounded-lg hover:bg-yellow-300 transition">
-          Save and Publish
-        </button>
-      </div>
-      </div>
-
-      <Toaster/>
-
     </div>
-  )
+  );
 }
 
-export default PublishSetting
+export default PublishSetting;

@@ -1,34 +1,33 @@
-// import React from 'react'
-
-import { FaCheckCircle } from "react-icons/fa"
-import Heading from "../commons/Heading"
+import { Check } from "lucide-react";
 
 function WhatYouWillLearn({ AboutCourse }: any) {
-  const { whatYouWillLearn }: any = AboutCourse
-  console.log(whatYouWillLearn)
+  const { whatYouWillLearn }: any = AboutCourse;
 
-  // In case it's a string (single text) or array
-  const learnItems = Array.isArray(whatYouWillLearn)
-    ? whatYouWillLearn
-    : [whatYouWillLearn]
+  // The field may arrive as a single string or as an array of bullets.
+  const learnItems = (
+    Array.isArray(whatYouWillLearn) ? whatYouWillLearn : [whatYouWillLearn]
+  ).filter(Boolean);
+
+  if (learnItems.length === 0) return null;
 
   return (
-    <div className="bg-[#1f1f1f] text-white border border-gray-700 rounded-lg flex flex-col gap-6 mx-20 mt-10 p-10 w-[63%] shadow-lg">
-      {/* Heading */}
-      <Heading text="What you'll learn" size="md" />
+    <section className="sn-card p-6 sm:p-8">
+      <h2 className="font-display text-xl font-bold text-white sm:text-2xl">
+        What you'll learn
+      </h2>
 
-      {/* Learning items */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+      <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-2">
         {learnItems.map((item: string, idx: number) => (
           <div key={idx} className="flex items-start gap-3">
-            <FaCheckCircle className="text-green-400 mt-1 w-5 h-5 flex-shrink-0" />
-            <p className="text-base text-gray-200 leading-relaxed">{item}</p>
+            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-success-500/15 text-success-400">
+              <Check className="h-3 w-3" strokeWidth={3} />
+            </span>
+            <p className="text-sm leading-relaxed text-ink-200">{item}</p>
           </div>
         ))}
       </div>
-    </div>
-  )
+    </section>
+  );
 }
 
-export default WhatYouWillLearn
-
+export default WhatYouWillLearn;

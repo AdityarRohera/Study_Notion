@@ -1,30 +1,47 @@
-import Heading from "../commons/Heading"
+import { Link } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
 
-
+/** Catalog page hero: breadcrumb + category title + description. */
 function AboutCourse({ heading, desc }: any) {
   return (
-    <div className="bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 px-10 py-8 w-full h-[30vh] flex items-center">
-      <div className="flex flex-col justify-center gap-6 max-w-4xl w-full">
-        
-        {/* Breadcrumb */}
-        <div className="text-gray-400 text-2xl flex items-center gap-1">
-          <span className="hover:text-gray-200 cursor-pointer transition">Home</span>
-          <span>/</span>
-          <span className="hover:text-gray-200 cursor-pointer transition">Catalog</span>
-          <span>/</span>
-          <span className="text-yellow-400 font-semibold">{heading}</span>
-        </div>
+    <header className="relative overflow-hidden border-b border-ink-800 bg-ink-900">
+      <div className="sn-aurora" aria-hidden="true" />
 
-        {/* Main Heading and Description */}
-        <div className="flex flex-col gap-3">
-          <Heading text={heading} variant="primary" size="lg" />
-          <p className="text-gray-200 text-lg md:text-xl leading-relaxed">
+      <div className="sn-container-wide relative py-12 md:py-16">
+        <nav aria-label="Breadcrumb">
+          <ol className="flex flex-wrap items-center gap-1 text-sm text-ink-400">
+            <li>
+              <Link to="/" className="transition-colors hover:text-ink-200">
+                Home
+              </Link>
+            </li>
+            <ChevronRight className="h-3.5 w-3.5 text-ink-600" aria-hidden />
+            <li>
+              <Link
+                to="/courses"
+                className="transition-colors hover:text-ink-200"
+              >
+                Catalog
+              </Link>
+            </li>
+            <ChevronRight className="h-3.5 w-3.5 text-ink-600" aria-hidden />
+            <li aria-current="page" className="font-semibold text-brand-300">
+              {heading}
+            </li>
+          </ol>
+        </nav>
+
+        <h1 className="mt-5 font-display text-3xl font-extrabold text-white sm:text-4xl lg:text-[2.75rem]">
+          {heading}
+        </h1>
+
+        {desc && (
+          <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-300 sm:text-lg">
             {desc}
           </p>
-        </div>
-
+        )}
       </div>
-    </div>
+    </header>
   );
 }
 

@@ -1,27 +1,14 @@
-// import React from 'react'
-import { Link } from "react-router-dom"
-
-import AuthTemplete from "../components/Authentication/AuthTemplete"
+import AuthTemplete from "../components/Authentication/AuthTemplete";
 
 function Login() {
   return (
-    <div className="bg-gray-900 text-white relative w-full min-h-[90vh]">
-      
-        <AuthTemplete
-          heading="Welcome Back"
-          desc="Discover your passions, Be Unstoppable"
-          imageSrc="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIR8CmqC9R1K73kjmrXiHdIEpU69OxUHKJaA&s"
-          formType="Login"
-        />
-
-        <div className="absolute top-[58%] left-[32%] text-md text-blue-500">
-          <Link to={'/update-password'}>Forgot Password</Link>
-        </div>
-    </div>
-
-
-
-  )
+    <AuthTemplete
+      heading="Welcome back"
+      desc="Pick up your track exactly where you left it — your progress, projects and notes are all waiting."
+      imageSrc="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80"
+      formType="Login"
+    />
+  );
 }
 
-export default Login
+export default Login;

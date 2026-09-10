@@ -1,21 +1,24 @@
-import MenuBar from "../../components/commons/MenuBar"
-import NewCourseTemplete from "../../components/Instructor-course/NewCourseTemplete"
 import { useParams } from "react-router-dom";
 
-function CourseInfo() {
+import DashboardLayout from "../../components/commons/DashboardLayout";
+import NewCourseTemplete from "../../components/Instructor-course/NewCourseTemplete";
 
-  const {state} = useParams();
-  console.log(state)
+function CourseInfo() {
+  const { state } = useParams();
 
   return (
-    <div className="bg-gray-900 text-white flex w-[100vw] relative">
-
-         <MenuBar/>
-        
-         <NewCourseTemplete varient="courseInfo" state={state}/>
-
-    </div>
-  )
+    <DashboardLayout
+      breadcrumbs={[
+        { label: "Dashboard", to: "/dashboard" },
+        { label: "My Courses", to: "/dashboard/mycourse" },
+        { label: "Course Information" },
+      ]}
+      title="Add course information"
+      subtitle="Tell learners what this course covers and who it's for. You can edit all of it before publishing."
+    >
+      <NewCourseTemplete varient="courseInfo" state={state} />
+    </DashboardLayout>
+  );
 }
 
-export default CourseInfo
+export default CourseInfo;

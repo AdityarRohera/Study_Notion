@@ -1,41 +1,45 @@
 import { useState } from "react";
-import { ResetPasswordLayout } from "../components/Authentication/ResetPasswordLayout";
-import { resetPassword } from "../Services/operations/auth";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { KeyRound } from "lucide-react";
+
+import { ResetPasswordLayout } from "../components/Authentication/ResetPasswordLayout";
+import InputField from "../components/commons/InputField";
+import { resetPassword } from "../Services/operations/auth";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleSubmit = async(e : any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log("Password reset link sent to:", email);
-    await resetPassword(dispatch , {email});
-    navigate('/check-email' , {state : email});
+    await resetPassword(dispatch, { email });
+    navigate("/check-email", { state: email });
   };
 
   return (
-     <ResetPasswordLayout
+    <ResetPasswordLayout
       heading="Reset your password"
-      desc="Have no fear. We'll email you instructions to reset your password. 
-                If you don’t have access to your email we can try account recovery"
-      buttonText="Reset Password"
+      desc="Enter the email you signed up with and we'll send you a secure link to set a new password. The link stays valid for 15 minutes."
+      buttonText="Send reset link"
+      icon={<KeyRound className="h-6 w-6" />}
       submitHandler={handleSubmit}
     >
       <div>
-        <label className="block text-sm font-medium text-gray-200 mb-2">
-          Email Address <span className="text-red-500">*</span>
+        <label htmlFor="reset-email" className="sn-label">
+          Email address <span className="text-danger-400">*</span>
         </label>
-        <input
+        <InputField
           type="email"
-          placeholder="myemailaddress@gmail.com"
+          id="reset-email"
+          name="email"
+          autoComplete="email"
+          placeholder="you@example.com"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          size="xl"
           required
-          className="w-full px-4 py-3 rounded-lg bg-[#1a1f29] text-gray-200 placeholder-gray-500 
-                     focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          changeHandler={(e) => setEmail(e.target.value)}
         />
       </div>
     </ResetPasswordLayout>

@@ -1,53 +1,52 @@
-// import React from 'react'
-import AboutCourse from "../components/Category/AboutCourse"
-import CourseContainer from "../components/Category/CourseContainer"
-// import { Toaster } from "react-hot-toast"
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
-import { useDispatch} from "react-redux";
+import { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
+import AboutCourse from "../components/Category/AboutCourse";
+import CourseContainer from "../components/Category/CourseContainer";
 import { getCategoryCourses } from "../Services/operations/categoryCourse";
-// import { HomePageExplore } from "../Data/homePageExplore";
-import { useParams } from "react-router-dom";
-import { useSelector} from "react-redux";
 import type { RootState } from "../Services/strore";
-import Loading from "../components/commons/Loading";
+import { CourseGridSkeleton, Skeleton } from "../components/commons/Skeleton";
 
 function Catalog() {
+  const { loading } = useSelector((state: RootState) => state.loading);
 
-  const {loading} = useSelector((state : RootState) => state.loading)
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const categoryId = location.state;
+  const query = new URLSearchParams(location.search);
+  const desc = query.get("desc") || "";
+  const params = useParams<{ catalogName: string }>();
 
-      const location = useLocation();
-      const dispatch = useDispatch();
-      const categoryId = location.state
-      const query = new URLSearchParams(location.search);
-      const desc = query.get("desc") || "";
-       const params = useParams<{ catalogName: string }>(); // get name from URL
-       console.log(params.catalogName)
+  // Redux `loading` only flips after the thunk starts, so track the first
+  // completed fetch locally — otherwise the empty state flashes on mount.
+  const [settled, setSettled] = useState(false);
 
-      console.log("Category ID:", categoryId);
-      console.log("Description:", desc);
+  useEffect(() => {
+    setSettled(false);
+    (async () => {
+      await getCategoryCourses({ dispatch, categoryId });
+      setSettled(true);
+    })();
+  }, [categoryId]);
 
-    // fetch Data from home page explore;
-    // const {heading , description} = HomePageExplore[2].courses[1];
-    
-
-    useEffect(() => {
-        getCategoryCourses({dispatch , categoryId});
-      } , [categoryId]);
-
-      if(loading){
-        return <Loading/>
-      }
-
+  const showSkeleton = loading || !settled;
 
   return (
-    <div>
-      <AboutCourse heading={params.catalogName}  desc= {desc}/>
-      <CourseContainer/>
+    <div className="min-h-[60vh] bg-ink-950">
+      <AboutCourse heading={params.catalogName} desc={desc} />
 
-      {/* <Toaster/> */}
+      {showSkeleton ? (
+        <div className="sn-container-wide py-14 md:py-20">
+          <Skeleton className="mb-3 h-8 w-64" />
+          <Skeleton className="mb-8 h-4 w-96 max-w-full" />
+          <CourseGridSkeleton count={8} />
+        </div>
+      ) : (
+        <CourseContainer />
+      )}
     </div>
-  )
+  );
 }
 
 export default Catalog;

@@ -1,14 +1,12 @@
-// import React from 'react'
+import { FolderOpen } from "lucide-react";
 
-// SectionAndSubsectionHeading.tsx
-// SectionAndSubsectionHeading.tsx
 function SectionAndSubsectionHeading({ heading }: { heading: string }) {
   return (
-    <div className="flex items-center gap-2 font-medium text-gray-200">
-      📁 {heading}
+    <div className="flex min-w-0 items-center gap-2.5">
+      <FolderOpen className="h-4 w-4 shrink-0 text-brand-400" />
+      <span className="truncate font-semibold text-ink-100">{heading}</span>
     </div>
   );
 }
 
 export default SectionAndSubsectionHeading;
-

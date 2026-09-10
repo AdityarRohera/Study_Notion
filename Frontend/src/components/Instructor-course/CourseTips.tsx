@@ -1,21 +1,34 @@
+import { Lightbulb } from "lucide-react";
 
+const TIPS = [
+  "Set a price, or make the course free to build an audience first.",
+  "Thumbnails look sharpest at 1024×576 (16:9).",
+  "The overview video is what most people watch before buying — lead with the outcome.",
+  "Use the Course Builder to group lessons into sections learners can finish in one sitting.",
+  "Add topics inside a section to create lessons, quizzes and assignments.",
+  "Anything in Additional Data shows up on the public course page.",
+  "Announcements notify every enrolled student — use them sparingly.",
+];
 
-// components/CourseTips.tsx
 export default function CourseTips() {
   return (
-    <div className="bg-[#1f2937] text-white p-4 rounded-md shadow-md max-w-md">
-      <h2 className="text-yellow-400 text-lg font-semibold mb-2">
-        ✨ Course Upload Tips
+    <aside className="sn-card p-5 sm:p-6">
+      <h2 className="flex items-center gap-2 font-display text-base font-bold text-brand-300">
+        <Lightbulb className="h-4 w-4" />
+        Course upload tips
       </h2>
-      <ul className="list-disc list-inside text-sm space-y-1">
-        <li>Set the Course Price option or make it free.</li>
-        <li>Standard size for the course thumbnail is 1024x576.</li>
-        <li>Video section controls the course overview video.</li>
-        <li>Course Builder is where you create & organize a course.</li>
-        <li>Add Topics in the Course Builder to create lessons, quizzes, and assignments.</li>
-        <li>Info from the Additional Data section shows on the course single page.</li>
-        <li>Make Announcements to notify any important notes to all enrolled students.</li>
+
+      <ul className="mt-4 space-y-3">
+        {TIPS.map((tip) => (
+          <li key={tip} className="flex items-start gap-2.5">
+            <span
+              className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-400/70"
+              aria-hidden="true"
+            />
+            <span className="text-sm leading-relaxed text-ink-400">{tip}</span>
+          </li>
+        ))}
       </ul>
-    </div>
+    </aside>
   );
 }

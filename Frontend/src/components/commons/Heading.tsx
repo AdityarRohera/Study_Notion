@@ -1,81 +1,60 @@
-// import React from 'react'
-
 type HeadingProps = {
-    variant? : "primary" | "secondary";
-    size? : "sm" | "md" | "lg"; 
-    text : string;
-    highLight? : {
-        start : number;
-        end : number;
-    }
-}
+  variant?: "primary" | "secondary";
+  size?: "sm" | "md" | "lg" | "xl";
+  text: string;
+  as?: "h1" | "h2" | "h3";
+  className?: string;
+  /** 1-indexed, inclusive word range to accent. */
+  highLight?: {
+    start: number;
+    end: number;
+  };
+};
 
 const headingvariant = {
-    primary : "text-white",
-    secondary : "text-black"
-}
+  primary: "text-white",
+  secondary: "text-ink-900",
+};
 
 const headingSize = {
-    sm : "text-2xl fond-bold",
-    md : "text-3xl fond-semibold",
-    lg : "text-4xl font-extrabold"
-}
+  sm: "text-xl sm:text-2xl font-bold",
+  md: "text-2xl sm:text-3xl font-bold",
+  lg: "text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold leading-[1.12]",
+  xl: "text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05]",
+};
 
-const colors = {
-    blue : "text-blue-400",
-    green : "text-green-200"
-}
+function Heading({
+  text,
+  variant,
+  size,
+  highLight,
+  as: Tag = "h2",
+  className,
+}: HeadingProps) {
+  const words = (text ?? "").split(" ");
 
-function Heading({text , variant , size , highLight} : HeadingProps) {
+  const rendered = words.map((word, i) => {
+    const position = i + 1;
+    const isAccented =
+      highLight && position >= highLight.start && position <= highLight.end;
 
-    // Apply color logic
-    // let newText;
-    // if(changeColor){
-    //     let heading = text.split(" ");
-    //     for(let t=changeColor.start-1; t<changeColor.end-1; t++){
-    //             if(t == changeColor.end-2){
-    //                 heading[t].style.backgroundColor = colors.blue
-    //             } else{
-    //                 heading[t].style.backgroundColor = colors.green;
-    //             }
-    //     }
-    //     text = heading.join(" ")
-    // }
-    // now merge it
-
-    // another logic
-     const heading = text.split(" ");
-     const coloredWords = [];
-
-  for (let i = 0; i < heading.length; i++) {
-    let colorClass = "";
-
-    const wordPosition = i + 1;
-
-    if (highLight && wordPosition >= highLight.start && wordPosition <= highLight.end) {
-      if (wordPosition === highLight.end) {
-        colorClass = colors.green;
-      } else {
-        colorClass = colors.blue;
-      }
-    }
-
-    coloredWords.push(
-      <span key={i} className={colorClass}>
-        {heading[i]}{" "}
+    return (
+      <span key={i} className={isAccented ? "sn-gradient-text" : undefined}>
+        {word}
+        {i < words.length - 1 ? " " : ""}
       </span>
     );
-
-  }
-    
-
-
+  });
 
   return (
-    <h1 className ={`${variant ? headingvariant[variant] : headingvariant.primary} ${size ? headingSize[size!] : headingSize.md} `}>
-        {coloredWords}
-    </h1>
-  )
+    <Tag
+      className={`${variant ? headingvariant[variant] : headingvariant.primary} ${
+        size ? headingSize[size] : headingSize.md
+      } ${className ?? ""}`}
+    >
+      {rendered}
+    </Tag>
+  );
 }
 
-export default Heading
+export default Heading;

@@ -1,85 +1,117 @@
-// import React from 'react'
+import { Link } from "react-router-dom";
+import { ChevronRight, Clock, Globe, Star, Users } from "lucide-react";
 
-// import Catalog from "../../pages/Catalog";
-import BuyCourseCard from "./BuyCourseCard"
-// import { useSelector } from "react-redux";
-// import type{ RootState } from "../../Services/strore";
-import { useEffect } from "react";
+function AboutFullCourse({ AboutCourse }: any) {
+  const {
+    courseName,
+    courseDesc,
+    totalSum,
+    TotalNumberRated,
+    category,
+    instructor,
+  }: any = AboutCourse;
 
-function AboutFullCourse({AboutCourse} : any) {
+  const rating =
+    TotalNumberRated > 0 ? Number(totalSum) / Number(TotalNumberRated) : 0;
+  const ratingLabel = rating > 0 ? rating.toFixed(1) : "New";
 
-  const {courseName , courseDesc , totalSum , TotalNumberRated , category , instructor , _id , price} : any = AboutCourse
-  console.log(instructor , category)
-
-      const calAvgRating = () => {
-          const rating = totalSum / TotalNumberRated;
-          return rating;
-      }
-  
-      let rating = 0;
-      useEffect(() => {
-           rating = calAvgRating();
-      } , [totalSum , TotalNumberRated])
-
+  const instructorName = instructor
+    ? `${instructor.firstName ?? ""} ${instructor.lastName ?? ""}`.trim()
+    : "StudyNotion";
 
   return (
-   <div className="relative bg-gray-700 text-white flex px-20 py-10 w-full min-h-[40vh]">
-  {/* Left Section */}
-  <div className="flex flex-col w-[69%] space-y-6 border-r-1 border-gray-500 ">
-    
-    {/* Breadcrumb */}
-    <div className="text-base flex items-center gap-1">
-      <span className="opacity-60">Home</span> /
-      <span className="opacity-60">Learning</span> /
-      <span className="text-yellow-400 font-semibold">{category.name}</span>
-    </div>
+    <header className="relative overflow-hidden border-b border-ink-800 bg-ink-900">
+      <div className="sn-aurora" aria-hidden="true" />
 
-    {/* Course Title and Description */}
-    <div>
-      <h1 className="text-3xl font-bold leading-tight break-words whitespace-normal">
-        {courseName}
-      </h1>
-      <p className="text-gray-300 mt-2 text-lg max-w-[90%]">
-       {courseDesc}
-      </p>
-    </div>
+      <div className="sn-container-wide relative py-10 md:py-14">
+        <nav aria-label="Breadcrumb">
+          <ol className="flex flex-wrap items-center gap-1 text-sm text-ink-400">
+            <li>
+              <Link to="/" className="transition-colors hover:text-ink-200">
+                Home
+              </Link>
+            </li>
+            <ChevronRight className="h-3.5 w-3.5 text-ink-600" aria-hidden />
+            <li>
+              <Link
+                to="/courses"
+                className="transition-colors hover:text-ink-200"
+              >
+                Courses
+              </Link>
+            </li>
+            {category?.name && (
+              <>
+                <ChevronRight
+                  className="h-3.5 w-3.5 text-ink-600"
+                  aria-hidden
+                />
+                <li
+                  aria-current="page"
+                  className="font-semibold text-brand-300"
+                >
+                  {category.name}
+                </li>
+              </>
+            )}
+          </ol>
+        </nav>
 
-    {/* Ratings and Students */}
-    <div className="flex items-center gap-3 text-lg">
-      <span className="text-yellow-400 font-bold">{rating}</span>
-      <div className="flex">
-        {[...Array(4)].map((_, i) => (
-          <svg key={i} className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
-            <path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.561-.955L10 0l2.951 5.955 6.561.955-4.756 4.635 1.122 6.545z" />
-          </svg>
-        ))}
-        <svg className="w-5 h-5 text-yellow-400 stroke-current fill-none" viewBox="0 0 20 20" strokeWidth="1">
-          <path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.561-.955L10 0l2.951 5.955 6.561.955-4.756 4.635 1.122 6.545z" />
-        </svg>
-      </div>
-      <span className="text-gray-300">({TotalNumberRated} ratings)</span>
-      <span className="text-gray-300">• 332,402 students</span>
-    </div>
+        <h1 className="mt-5 max-w-3xl font-display text-3xl font-extrabold leading-tight text-white sm:text-4xl">
+          {courseName}
+        </h1>
 
-    {/* Instructor and Meta Info */}
-    <div className="text-lg text-gray-300">
-      <p className="mb-1">Created by <span className="text-white font-semibold">{instructor.firstName + " " +  instructor.lastName}</span></p>
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          <span>🕒</span>
-          <p>Created at 02/2020</p>
+        <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-300">
+          {courseDesc}
+        </p>
+
+        {/* Rating + enrolment */}
+        <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+          <span className="flex items-center gap-2">
+            <span className="font-bold text-brand-300">{ratingLabel}</span>
+            <span className="flex items-center gap-0.5" aria-hidden="true">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star
+                  key={i}
+                  className={`h-4 w-4 ${
+                    rating >= i + 1
+                      ? "fill-brand-400 text-brand-400"
+                      : "text-ink-600"
+                  }`}
+                />
+              ))}
+            </span>
+            <span className="text-ink-400">
+              ({TotalNumberRated ?? 0} ratings)
+            </span>
+          </span>
+
+          <span className="flex items-center gap-1.5 text-ink-400">
+            <Users className="h-4 w-4" />
+            Taught by{" "}
+            <span className="font-semibold text-white">{instructorName}</span>
+          </span>
         </div>
-        <div className="flex items-center gap-2">
-          <span>🌐</span>
-          <p>English</p>
+
+        {/* Meta */}
+        <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-ink-400">
+          <span className="flex items-center gap-2">
+            <Clock className="h-4 w-4 text-brand-400" />
+            Updated recently
+          </span>
+          <span className="flex items-center gap-2">
+            <Globe className="h-4 w-4 text-brand-400" />
+            English
+          </span>
+          {category?.name && (
+            <span className="sn-badge border-ink-700 bg-ink-850 text-ink-200">
+              {category.name}
+            </span>
+          )}
         </div>
       </div>
-    </div>
-  </div>
-
-        <BuyCourseCard id={_id} amount = {price} courseName={courseName}/>
-</div>
-  )
+    </header>
+  );
 }
 
-export default AboutFullCourse
+export default AboutFullCourse;

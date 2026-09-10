@@ -1,65 +1,88 @@
-// import React from 'react'
-import { useParams } from "react-router-dom";
-import CourseContentCard from "../../components/EnrolledCourses/CourseContentCard ";
-import { getSubSection } from "../../Services/operations/purchasedCoursesUtilis";
 import { useEffect, useState } from "react";
-import Loading from "../../components/commons/Loading";
-// import toast from "react-hot-toast";
-// import LecturePlayer from "../../components/commons/LecturePlayer";
-// import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { Video } from "lucide-react";
+
+import CourseContentCard from "../../components/EnrolledCourses/CourseContentCard ";
+import DashboardLayout from "../../components/commons/DashboardLayout";
+import { CourseGridSkeleton } from "../../components/commons/Skeleton";
+import { EmptyState, ErrorState } from "../../components/commons/States";
+import { getSubSection } from "../../Services/operations/purchasedCoursesUtilis";
+import { formatDuration } from "../../Services/operations/common";
+
+const LECTURE_IMAGE =
+  "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80";
 
 function EnrolledCourseSubSection() {
-  const {sectionId} = useParams();
-//   const navigate = useNavigate();
-  console.log(sectionId)
+  const { sectionId } = useParams();
+  const [subContentData, setSubContentData] = useState<any>(null);
+  const [failed, setFailed] = useState(false);
 
-  const [subContentData , setSubContentData] = useState<any>(null);
-
-  console.log(subContentData)
-
-    const getSubSectionHandler = async() => {
-        const res = await getSubSection(sectionId)
-        console.log(res);
-        if(res){
-            setSubContentData(res.Section.subSection);
-        }
+  const getSubSectionHandler = async () => {
+    setFailed(false);
+    try {
+      const res = await getSubSection(sectionId);
+      if (res) {
+        setSubContentData(res.Section?.subSection ?? []);
+      } else {
+        setFailed(true);
+      }
+    } catch {
+      setFailed(true);
     }
+  };
 
-    useEffect(() => {
-        getSubSectionHandler();
-    } , [])
+  useEffect(() => {
+    getSubSectionHandler();
+  }, []);
 
-    if(!subContentData){
-        return <Loading/>
-    }
-
-//   const subSections = subContentData["68a7126044275c85325fc12d"] || [];
+  const lectures = Array.isArray(subContentData) ? subContentData : [];
 
   return (
-    <div className="w-full min-h-screen bg-gray-900 text-white p-10">
-  <h1 className="text-3xl font-bold mb-8">📖 Sub sections</h1>
-
-  {/* Grid for lectures */}
-  {subContentData.length > 0 ? (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-      {subContentData.map((sub: any) => (
-        <CourseContentCard
-          key={sub.id}
-          title={sub.subSectionName}
-          subtitle={sub.description}
-          extra={`Duration: ${sub.duration} mins`}
-          image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTRrawJYvUrow_FNaZXahuaSRX00SlcHD97g&s"
-          onClick={() =>
-                    window.open(`/watch/${encodeURIComponent(sub.videoUrl)}`, "_blank")
-                  }
+    <DashboardLayout
+      breadcrumbs={[
+        { label: "Dashboard", to: "/dashboard/my-profile" },
+        { label: "Enrolled Courses", to: "/dashboard/enrolled-courses" },
+        { label: "Lectures" },
+      ]}
+      title="Lectures"
+      subtitle="Pick a lecture to open it in the player."
+    >
+      {failed ? (
+        <ErrorState onRetry={getSubSectionHandler} />
+      ) : subContentData === null ? (
+        <CourseGridSkeleton count={3} />
+      ) : lectures.length === 0 ? (
+        <EmptyState
+          title="No lectures in this section yet"
+          description="This section doesn't have any published lectures. Check back soon, or try another section."
+          icon={<Video className="h-6 w-6" />}
+          action={{
+            label: "Back to sections",
+            to: "/dashboard/enrolled-courses",
+          }}
         />
-      ))}
-    </div>
-  ) : (
-    <p className="text-gray-400">No subsections found for this course.</p>
-  )}
-</div>
-    
+      ) : (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          {lectures.map((sub: any) => (
+            <CourseContentCard
+              key={sub._id ?? sub.id}
+              title={sub.subSectionName}
+              subtitle={sub.description}
+              extra={
+                sub.duration ? `Duration: ${formatDuration(sub.duration)}` : undefined
+              }
+              image={LECTURE_IMAGE}
+              onClick={() =>
+                window.open(
+                  `/watch/${encodeURIComponent(sub.videoUrl)}`,
+                  "_blank"
+                )
+              }
+            />
+          ))}
+        </div>
+      )}
+    </DashboardLayout>
   );
 }
 

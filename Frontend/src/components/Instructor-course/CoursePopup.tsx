@@ -1,78 +1,97 @@
-// import { useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { AlertTriangle, X } from "lucide-react";
+
 import { deleteDraftCourse } from "../../Services/operations/instructorUtilis";
-import { useSelector} from "react-redux";
 import type { RootState } from "../../Services/strore";
 
-export default function CoursePopup({close} : any) {
+export default function CoursePopup({ close }: any) {
+  const { loading } = useSelector((state: RootState) => state.loading);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-   const {loading} = useSelector((state :RootState ) => state.loading)
-
-    const navigate = useNavigate(); 
-    const dispatch = useDispatch();
+  // Escape closes, and the page behind shouldn't scroll while this is open.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [close]);
 
   const handleContinue = () => {
-    console.log("✅ Continue Draft clicked");
     navigate(`/dashboard/mycourse/course-info/draft-course`);
   };
 
-  const handleStartNew = async() => {
-    console.log("🆕 Start New clicked");
-        // first call delete api and then navigate to new page
-        const res = await deleteDraftCourse(dispatch);
-        if(res){
-           navigate('/dashboard/mycourse/course-info/new-course');
-        }
+  const handleStartNew = async () => {
+    // first call delete api and then navigate to new page
+    const res = await deleteDraftCourse(dispatch);
+    if (res) {
+      navigate("/dashboard/mycourse/course-info/new-course");
+    }
   };
 
-return (
-  <div className="flex justify-center items-center bg-gray-900 text-white">
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="course-popup-title"
+      className="fixed inset-0 z-[70] flex items-center justify-center p-4"
+    >
+      <div
+        onClick={() => close()}
+        className="absolute inset-0 bg-ink-950/80 backdrop-blur-sm"
+      />
 
-    {/* Background Overlay */}
-    <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm"></div>
-
-    {/* Popup Modal */}
-    <div className="fixed inset-0 flex items-center justify-center">
-      <div className="bg-gray-800 p-6 rounded-2xl shadow-lg max-w-sm w-full relative min-h-[200px]">
-
-        {/* Close Button */}
+      <div className="sn-card relative w-full max-w-md animate-scale-in p-6 sm:p-7">
         <button
+          type="button"
           onClick={() => close()}
-          className="absolute top-3 right-3 text-white hover:text-white cursor-pointer text-2xl bg-red-500 p-1 rounded-md"
+          aria-label="Close dialog"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-lg text-ink-400 transition-colors hover:bg-ink-800 hover:text-white"
         >
-          ✕
+          <X className="h-4 w-4" />
         </button>
 
-        <h2 className="text-lg font-semibold">
-          You have an ongoing course. What would you like to do?
+        <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-400/12 text-brand-300">
+          <AlertTriangle className="h-5 w-5" />
+        </div>
+
+        <h2
+          id="course-popup-title"
+          className="pr-8 font-display text-lg font-bold text-white"
+        >
+          You already have a course in progress
         </h2>
-        <p className="mt-2 text-gray-300">React Basics (continue building?)</p>
+        <p className="mt-2.5 text-sm leading-relaxed text-ink-400">
+          Continue where you left off, or discard the draft and start something
+          new. Starting new permanently removes the current draft.
+        </p>
 
-        {/* Buttons */}
-        <div className="mt-6 flex justify-end gap-3">
+        <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <button
-            onClick={handleContinue}
-            className="px-4 py-2 bg-green-600 rounded-lg hover:bg-green-500"
-          >
-            Continue Draft
-          </button>
-
-         <button
+            type="button"
             onClick={handleStartNew}
             disabled={loading}
-            className={`px-4 py-2 rounded-lg transition-colors duration-300 ${
-              loading
-                ? "bg-red-700 hover:bg-red-700 cursor-not-allowed"
-                : "bg-red-600 hover:bg-red-500"
-            }`}
+            className="inline-flex h-11 items-center justify-center rounded-xl border border-danger-500/40 px-5 text-sm font-semibold text-danger-400 transition-all duration-200 hover:bg-danger-500/10 disabled:cursor-not-allowed disabled:opacity-60"
           >
-        {loading ? "Deleting Draft Course..." : "Start New"}
-        </button>
-        
+            {loading ? "Deleting draft…" : "Discard and start new"}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleContinue}
+            className="inline-flex h-11 items-center justify-center rounded-xl bg-brand-400 px-5 text-sm font-semibold text-ink-950 transition-all duration-200 hover:bg-brand-300 hover:shadow-glow active:scale-[0.98]"
+          >
+            Continue draft
+          </button>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
 }

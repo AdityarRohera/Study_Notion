@@ -1,67 +1,115 @@
-// import React from 'react'
-
-import { IoEyeOutline } from "react-icons/io5";
-import { IoEyeOffOutline } from "react-icons/io5";
+import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 
 interface InputFieldType {
-    type : string;
-    placeholder? : string;
-    name? : string;
-    id? : string;
-    value? : string;
-    startIcon ? : any;
-    endIcon ? : any;
-    passwordType ? :string;
-    varient? : 'Primary' | 'Secondary';
-    size : string;
-    min? : number;
-    max? : number;
-    classNameProp? : any 
-    changeHandler? : (event : any) => void;
-    iconChangeHandler? : (e : any) => void;
+  type: string;
+  placeholder?: string;
+  name?: string;
+  id?: string;
+  value?: string;
+  startIcon?: any;
+  endIcon?: any;
+  passwordType?: string;
+  varient?: "Primary" | "Secondary";
+  size: string;
+  min?: number;
+  max?: number;
+  required?: boolean;
+  autoComplete?: string;
+  classNameProp?: any;
+  changeHandler?: (event: any) => void;
+  iconChangeHandler?: (e: any) => void;
 }
 
-const InputFieldVarient : any = {
-    Primary : "bg-gray-50 border-0 border-b-2 border-white text-gray-900 text-xl rounded-lg  focus:ring-0 focus:border-white block w-full p-2.5 dark:bg-gray-700 dark:border-b-1 dark:border-white dark:placeholder-gray-400 dark:text-white dark:focus:ring-0 dark:focus:border-white",
+/**
+ * Shared text input.
+ *
+ * Sizes used to be hard pixel widths (245px / 490px) which broke every
+ * responsive layout they appeared in. They are now fluid: the field fills its
+ * container and the `size` prop only caps the maximum width on wide screens.
+ */
+const InputFieldVarient: Record<string, string> = {
+  Primary: "sn-field",
+  Secondary:
+    "sn-field bg-white text-ink-900 border-ink-200 placeholder:text-ink-400 hover:border-ink-300 focus:bg-white focus:border-brand-500",
+};
 
-    Secondary : "bg-white text-gray-900 text-xl border-0 border-b-2 border-black rounded-lg focus:ring-0 focus:border-black block w-full p-2.5 placeholder-gray-500",
-}
+const InputFieldSize: Record<string, string> = {
+  sm: "w-full sm:max-w-[9rem]",
+  md: "w-full",
+  lg: "w-full",
+  xl: "w-full",
+};
 
-const InputFieldSize : any = {
-    sm : "w-[120px] h-[50px]",
-    md : "w-[245px] h-[50px]",
-    lg : "w-[490px] h-[50px]",
-    xl : "w-full h-[50px]",
-}
+function InputField({
+  type,
+  placeholder,
+  classNameProp,
+  name,
+  id,
+  value,
+  varient,
+  size,
+  startIcon,
+  endIcon,
+  passwordType,
+  min,
+  max,
+  required,
+  autoComplete,
+  changeHandler,
+  iconChangeHandler,
+}: InputFieldType) {
+  const hasToggle = Boolean(passwordType);
 
-const commonProperties = "flex gap-2"
-
-function InputField({type , placeholder ,  classNameProp , name , id , value , varient , size ,  startIcon , endIcon , passwordType , min , max, changeHandler , iconChangeHandler} : InputFieldType) {
   return (
-    <div className={`relative ${commonProperties} ${InputFieldSize[size]}} `}>
-
-        {startIcon && (
-           <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                {startIcon}
-          </span>
-        )}
-
-        <input className={`${varient ? InputFieldVarient[varient] : InputFieldVarient?.Primary}${InputFieldSize[size]} ${startIcon ? 'pl-14' : ''} ${endIcon ? 'pr-14 ' : ''}${classNameProp}`} type={type} placeholder={placeholder} name={name} id={id} value={value} min={min} max={max} onChange={changeHandler} />
-
-        {endIcon && (
-         <span className="absolute inset-y-0 right-0 flex items-center pr-3">
-            {endIcon}
+    <div className={`relative flex ${InputFieldSize[size] ?? "w-full"}`}>
+      {startIcon && (
+        <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-ink-400">
+          {startIcon}
         </span>
-        )}
+      )}
 
-        {passwordType && (
-         <button type="button" name={name} onClick={iconChangeHandler} className="absolute inset-y-0 right-0 flex items-center pr-3">
-             {passwordType === "password" ? <IoEyeOffOutline /> : <IoEyeOutline />}
+      <input
+        className={`${varient ? InputFieldVarient[varient] : InputFieldVarient.Primary} ${
+          startIcon ? "pl-11" : ""
+        } ${endIcon || hasToggle ? "pr-11" : ""} ${classNameProp ?? ""}`}
+        type={type}
+        placeholder={placeholder}
+        name={name}
+        id={id}
+        value={value}
+        min={min}
+        max={max}
+        required={required}
+        autoComplete={autoComplete}
+        onChange={changeHandler}
+      />
+
+      {endIcon && !hasToggle && (
+        <span className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-ink-400">
+          {endIcon}
+        </span>
+      )}
+
+      {hasToggle && (
+        <button
+          type="button"
+          name={name}
+          onClick={iconChangeHandler}
+          aria-label={
+            passwordType === "password" ? "Show password" : "Hide password"
+          }
+          className="absolute inset-y-0 right-0 flex items-center rounded-r-xl px-3.5 text-ink-400 transition-colors hover:text-brand-300"
+        >
+          {passwordType === "password" ? (
+            <IoEyeOffOutline className="h-5 w-5" />
+          ) : (
+            <IoEyeOutline className="h-5 w-5" />
+          )}
         </button>
-        )}
-        
+      )}
     </div>
-  )
+  );
 }
 
 export default InputField;

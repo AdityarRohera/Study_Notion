@@ -1,112 +1,104 @@
-// import { useState } from "react";
-import IconHeading from "./IconHeading";
+import { useNavigate } from "react-router-dom";
 import { LuCircleUserRound } from "react-icons/lu";
 import { GiGraduateCap } from "react-icons/gi";
 import { TiShoppingCart } from "react-icons/ti";
 import { IoSettingsOutline } from "react-icons/io5";
 import { ImExit } from "react-icons/im";
+
+import IconHeading from "./IconHeading";
 import { logout } from "../../Services/operations/auth";
-import { useNavigate } from "react-router-dom";
 
-function MenuBar() {
+export type MenuGroup = {
+  label?: string;
+  items: { text: string; path: string; icon: any }[];
+};
 
-  const navigate = useNavigate();
+const STUDENT_ITEMS = [
+  { text: "My Profile", path: "/dashboard/my-profile", icon: <LuCircleUserRound /> },
+  {
+    text: "Enrolled Courses",
+    path: "/dashboard/enrolled-courses",
+    icon: <GiGraduateCap />,
+  },
+  { text: "Cart", path: "/dashboard/cart", icon: <TiShoppingCart /> },
+];
 
-  // Menu Data
-  const UserHeadings = [
-    { text: "My Profile", path : "/dashboard/my-profile" , icon: <LuCircleUserRound /> },
-    { text: "Enrolled Courses", path : "/dashboard/enrolled-courses" , icon: <GiGraduateCap /> },
-    { text: "Cart", path : "/dashboard/cart" , icon: <TiShoppingCart /> },
-  ];
+const INSTRUCTOR_ITEMS = [
+  { text: "My Profile", path: "/dashboard/my-profile", icon: <LuCircleUserRound /> },
+];
 
-  const InstructorHeading = [
-      //  { text: "Dashboard", path : "/dashboard" , icon: <LuCircleUserRound /> },
-       { text: "My Profile", path : "/dashboard/my-profile" , icon: <LuCircleUserRound /> },
-  ]
+const INSTRUCTOR_COURSE_ITEMS = [
+  { text: "My Courses", path: "/dashboard/mycourse", icon: <GiGraduateCap /> },
+];
 
-  const MyCourse = [{ text: "My Courses", path : "/dashboard/mycourse" , icon: <GiGraduateCap /> },]
+const SETTINGS_ITEMS = [
+  { text: "Settings", path: "/dashboard/setting", icon: <IoSettingsOutline /> },
+];
 
-  const settings = [
-    { text: "Setting", path : "/dashboard/setting" , icon: <IoSettingsOutline /> },
-    // { text: "Logout", path : "/login" , icon: <ImExit /> },
-  ];
-
-
-  // Main menu start
-  let role
-  const user = localStorage.getItem('user');
-  if(user){
-    role = JSON.parse(user).account_type;
+/** Resolves the menu groups for the signed-in role. */
+export function useMenuGroups(): MenuGroup[] {
+  let role: string | undefined;
+  try {
+    const user = localStorage.getItem("user");
+    if (user) role = JSON.parse(user).account_type;
+  } catch {
+    role = undefined;
   }
-  
+
+  const groups: MenuGroup[] = [];
+
+  if (role === "Instructor") {
+    groups.push({ items: INSTRUCTOR_ITEMS });
+    groups.push({ label: "Instructor", items: INSTRUCTOR_COURSE_ITEMS });
+  } else {
+    groups.push({ items: STUDENT_ITEMS });
+  }
+
+  groups.push({ label: "Preferences", items: SETTINGS_ITEMS });
+
+  return groups;
+}
+
+/**
+ * Dashboard sidebar. Rendered as a sticky rail from `lg` up; on smaller screens
+ * DashboardLayout swaps it for a scrollable tab strip.
+ */
+function MenuBar({ onNavigate }: { onNavigate?: () => void } = {}) {
+  const navigate = useNavigate();
+  const groups = useMenuGroups();
 
   return (
-    <div className="border-r-1 border-gray-500 bg-gray-800 flex flex-col items-start gap-10 pl-6 pt-15 pr-10 w-[15%] min-h-[92vh]">
-
-
-      {
-        role === 'Student' && 
-        <div className="flex flex-col items-start gap-5 w-full text-xl ">
-        {UserHeadings.map((heading , index) => (
-          <IconHeading
-            key={index}
-            {...heading}
-          />
-        ))}
-       </div>
-      }
-
-      {
-        role === 'Instructor' && 
-        <div className="flex flex-col items-start gap-5 w-full text-xl">
-          <div className="flex flex-col items-start gap-5 w-full text-xl">
-         {InstructorHeading.map((heading , index) => (
-           <IconHeading
-             key={index}
-             {...heading}
-           />
-         ))}
+    <nav
+      aria-label="Dashboard"
+      className="flex h-full w-full flex-col gap-6 border-r border-ink-800 bg-ink-900 px-4 py-7"
+    >
+      {groups.map((group, i) => (
+        <div key={i} className="flex flex-col gap-1">
+          {group.label && (
+            <p className="mb-2 px-3.5 text-[0.6875rem] font-bold uppercase tracking-wider text-ink-500">
+              {group.label}
+            </p>
+          )}
+          {group.items.map((item) => (
+            <IconHeading key={item.path} {...item} onNavigate={onNavigate} />
+          ))}
         </div>
+      ))}
 
-         <hr className="text-white bg-gray-200 w-full" />
-
-         <span className="text-xl text-white opacity-100">Instructor</span>
-
-         <div className="flex flex-col items-start gap-5 w-full text-xl">
-         {MyCourse.map((heading , index) => (
-           <IconHeading
-             key={index}
-             {...heading}
-           />
-         ))}
-        </div>
-
-        </div>
-      }
-
-      <hr className="text-white bg-gray-200 w-full" />
-
-      <div className="flex flex-col items-start gap-10 w-full text-xl">
-        {settings.map((heading , index) => (
-          <IconHeading
-            key={index}
-            {...heading}
-            // isActiveHeading={activeId === heading.id}
-          />
-        ))}
-      </div>
-
-       {/* Logout*/}
-        <div
-          className={`text-xl text-white flex items-center gap-3 w-[100%] cursor-pointer opacity-50`}
+      <div className="mt-auto border-t border-ink-800 pt-4">
+        <button
+          type="button"
           onClick={() => logout(navigate)}
+          className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-ink-400 transition-all duration-200 hover:bg-danger-500/10 hover:text-danger-400"
         >
-          <ImExit />
-          <p>Logout</p>
-        </div>
-    </div>
+          <span className="flex h-5 w-5 shrink-0 items-center justify-center text-base">
+            <ImExit />
+          </span>
+          Log out
+        </button>
+      </div>
+    </nav>
   );
 }
 
 export default MenuBar;
-

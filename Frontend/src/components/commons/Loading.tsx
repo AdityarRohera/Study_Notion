@@ -1,22 +1,53 @@
-
 import { Loader2 } from "lucide-react";
 
-function Loading() {
-  return (
-    <div className="flex items-center justify-center min-h-screen w-full bg-black">
-      <div className="flex flex-col items-center">
-        {/* Big Lucide Loader */}
-        <Loader2 className="w-28 h-28 text-yellow-400 animate-spin drop-shadow-[0_0_15px_#facc15]" />
+type SpinnerProps = {
+  className?: string;
+  label?: string;
+};
 
-        {/* Stylish Loading Text */}
-        <p className="mt-6 text-3xl md:text-4xl font-extrabold text-white tracking-wider">
-          Loading
-          <span className="text-yellow-400 animate-pulse">...</span>
-        </p>
+/** Inline spinner — use inside buttons, cards and small regions. */
+export function Spinner({ className, label = "Loading" }: SpinnerProps) {
+  return (
+    <Loader2
+      role="status"
+      aria-label={label}
+      className={`animate-spin text-brand-400 ${className ?? "h-5 w-5"}`}
+    />
+  );
+}
+
+/**
+ * Full-page loader used as a route-level fallback.
+ * Deliberately calm: a soft brand halo instead of a hard black flash.
+ */
+function Loading({ message = "Loading" }: { message?: string }) {
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className="relative flex min-h-[70vh] w-full items-center justify-center bg-ink-950 px-6"
+    >
+      <div className="sn-aurora" aria-hidden="true" />
+
+      <div className="relative flex flex-col items-center gap-6">
+        <div className="relative flex h-20 w-20 items-center justify-center">
+          <span className="absolute inset-0 animate-ping rounded-full bg-brand-400/15" />
+          <span className="absolute inset-2 rounded-full bg-brand-400/10" />
+          <Loader2 className="relative h-10 w-10 animate-spin text-brand-400" />
+        </div>
+
+        <div className="text-center">
+          <p className="font-display text-lg font-semibold tracking-tight text-white">
+            {message}
+            <span className="text-brand-400">…</span>
+          </p>
+          <p className="mt-1 text-sm text-ink-400">
+            Just a moment while we get things ready.
+          </p>
+        </div>
       </div>
     </div>
   );
 }
 
 export default Loading;
-
